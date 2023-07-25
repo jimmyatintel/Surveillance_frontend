@@ -13,13 +13,22 @@ import KvmCard from './kvmcard.js';
 import DbgCard from './dbgcard.js';
 import DutCard from './dutcard.js';
 import Button from '@mui/material/Button';
+import {get_kvm_list,get_dut_list,get_dbg_list,get_kvm_detail} from "../functions/main.js"
 
 export default function SelectLabels() {
   const [kvm, setkvm] = React.useState('');
+  const [kvmlist, setkvmlist] = React.useState([]);
   const [dbg, setdbg] = React.useState('');
+  const [dbglist, setdbglist] = React.useState([]);
   const [dut, setdut] = React.useState('');
+  const [dutlist, setdutlist] = React.useState([]);
+  const [kvmpackage,setkvmpackage] = React.useState({});
   const KVMhandleChange = (event) => {
-    setkvm(event.target.value);
+    setkvm(event.target.value).then(
+      get_kvm_detail().then(res => {
+        setkvmpackage(res.data)
+      })
+    );
   };
   const DBGhandleChange = (event) => {
     setdbg(event.target.value);
@@ -27,6 +36,17 @@ export default function SelectLabels() {
   const DUThandleChange = (event) => {
     setdut(event.target.value);
   };
+  React.useEffect(() => {
+    get_kvm_list().then(res => {
+      setkvmlist(res.data.hostnames)
+    })
+    get_dut_list().then(res => {
+      setdutlist(res.data.machines)
+    })
+    get_dbg_list().then(res => {
+      setdbglist(res.data.ips)
+    })
+  },[]);
   const dutpackage = {
     machine_name: 'Willi01',
     ssim: '100',
@@ -37,16 +57,16 @@ export default function SelectLabels() {
     ip: '127.0.0.1',
     owner: 'Jimmy'
   }
-  const kvmpackage = {
-    hostname: '18F_AI01',
-    ip: '127.0.0.1',
-    owner: 'Jimmy',
-    status: 'idle',
-    version: '1.0.0',
-    nasip: '127.0.0.1',
-    streamurl: 'http://test.com',
-    streamstatus: 'idle'
-  }
+  // const kvmpackage = {
+  //   hostname: '18F_AI01',
+  //   ip: '127.0.0.1',
+  //   owner: 'Jimmy',
+  //   status: 'idle',
+  //   version: '1.0.0',
+  //   nasip: '127.0.0.1',
+  //   streamurl: 'http://test.com',
+  //   streamstatus: 'idle'
+  // }
   return (
     <div className='page_grid'>
       <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -57,12 +77,13 @@ export default function SelectLabels() {
           label="KVM"
           onChange={KVMhandleChange}
         >
-          <MenuItem value="">
+          <MenuItem value="" >
             <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>18F_AI01</MenuItem>
-          <MenuItem value={20}>18F_AI02</MenuItem>
-          <MenuItem value={30}>18F_AI03</MenuItem>
+          </MenuItem>{
+            kvmlist.map(function(object,i){
+              return <MenuItem value={i}>{object}</MenuItem>;
+            })
+          }
         </Select>
         {/* <FormHelperText>With label + helper text</FormHelperText> */}
       </FormControl>
@@ -76,10 +97,11 @@ export default function SelectLabels() {
         >
           <MenuItem value="">
             <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>twndbg1</MenuItem>
-          <MenuItem value={20}>twndbg2</MenuItem>
-          <MenuItem value={30}>twndbg3</MenuItem>
+          </MenuItem>{
+            dbglist.map(function(object,i){
+              return <MenuItem value={i}>{object}</MenuItem>;
+            })
+          }
         </Select>
       </FormControl>
       <FormControl sx={{ m: 1, minWidth: 180 }}>
@@ -92,10 +114,11 @@ export default function SelectLabels() {
         >
           <MenuItem value="">
             <em>None</em>
-          </MenuItem>
-          <MenuItem value={10}>Willi01</MenuItem>
-          <MenuItem value={20}>Willi02</MenuItem>
-          <MenuItem value={30}>Willi03</MenuItem>
+          </MenuItem>{
+            dutlist.map(function(object,i){
+              return <MenuItem value={i}>{object}</MenuItem>;
+            })
+          }
         </Select>
       </FormControl>
       <FormControl sx={{ m: 2, minWidth: 30 }}>
