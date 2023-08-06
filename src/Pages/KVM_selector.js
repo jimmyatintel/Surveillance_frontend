@@ -13,7 +13,7 @@ import KvmCard from './kvmcard.js';
 import DbgCard from './dbgcard.js';
 import DutCard from './dutcard.js';
 import Button from '@mui/material/Button';
-import {get_kvm_list,get_dut_list,get_dbg_list,get_kvm_detail} from "../functions/main.js"
+import {get_kvm_list,get_dut_list,get_dbg_list,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,submitmapping,deletemapping} from "../functions/main.js"
 
 export default function SelectLabels() {
   const [kvm, setkvm] = React.useState('');
@@ -23,19 +23,99 @@ export default function SelectLabels() {
   const [dut, setdut] = React.useState('');
   const [dutlist, setdutlist] = React.useState([]);
   const [kvmpackage,setkvmpackage] = React.useState({});
-  const KVMhandleChange = (event) => {
-    setkvm(event.target.value).then(
-      get_kvm_detail().then(res => {
-        setkvmpackage(res.data)
+  const [dbgpackage,setdbgpackage] = React.useState({});
+  const [dutpackage,setdutpackage] = React.useState({});
+  const KVMhandleChange = async function (event) {
+    // console.log(event.target.value)
+    await setkvm(event.target.value)
+    if(dbg==='' && dut===''){
+      get_kvm_map(event.target.value).then(res => {
+        console.log(res.data)
+        if(res.data.dbghost_ip!==""){
+          setdbg(res.data.dbghost_ip)
+          get_dbg_detail(res.data.dbghost_ip).then(res => {
+            console.log(res.data)
+            setdbgpackage(res.data)
+          })
+        }
+        if(res.data.dut_machine!==""){
+          setdut(res.data.dut_machine)
+          get_dut_detail(res.data.dut_machine).then(res => {
+            console.log(res.data)
+            setdutpackage(res.data)
+          })
+        }
       })
-    );
+    }
+    get_kvm_detail(event.target.value).then(res => {
+      console.log(res.data)
+      setkvmpackage(res.data)
+    })
   };
   const DBGhandleChange = (event) => {
     setdbg(event.target.value);
+    if(kvm==='' && dut===''){
+      get_dbg_map(event.target.value).then(res => {
+        console.log(res.data)
+        if(res.data.kvm_hostname!==""){
+          setkvm(res.data.kvm_hostname)
+          get_kvm_detail(res.data.kvm_hostname).then(res => {
+            console.log(res.data)
+            setkvmpackage(res.data)
+          })
+        }
+        if(res.data.dut_machine!==""){
+          setdut(res.data.dut_machine)
+          get_dut_detail(res.data.dut_machine).then(res => {
+            console.log(res.data)
+            setdutpackage(res.data)
+          })
+        }
+      })
+    }
+    get_dbg_detail(event.target.value).then(res => {
+      console.log(res.data)
+      setdbgpackage(res.data)
+    })
   };
   const DUThandleChange = (event) => {
     setdut(event.target.value);
+    if(kvm==='' && dbg===''){
+      get_dut_map(event.target.value).then(res => {
+        console.log(res.data)
+        if(res.data.kvm_hostname!==""){
+          setkvm(res.data.kvm_hostname)
+          get_kvm_detail(res.data.kvm_hostname).then(res => {
+            console.log(res.data)
+            setkvmpackage(res.data)
+          })
+        }
+        if(res.data.dbghost_ip!==""){ 
+          setdbg(res.data.dbghost_ip)
+          get_dbg_detail(res.data.dbghost_ip).then(res => {
+            console.log(res.data)
+            setdbgpackage(res.data)
+          })
+        }
+      })        
+    }
+    get_dut_detail(event.target.value).then(res => {
+      console.log(res.data)
+      setdutpackage(res.data)
+    })
   };
+  const commitclick = (event) => {
+    submitmapping(kvm,dbg,dut)
+  };
+  const deleteclick = async () => {
+    const ans = deletemapping(kvm)
+    if(ans){
+      setkvm('')
+      setdut('')
+      setdbg('')
+    }
+
+  }
   React.useEffect(() => {
     get_kvm_list().then(res => {
       setkvmlist(res.data.hostnames)
@@ -47,26 +127,6 @@ export default function SelectLabels() {
       setdbglist(res.data.ips)
     })
   },[]);
-  const dutpackage = {
-    machine_name: 'Willi01',
-    ssim: '100',
-    status: 'idle'
-  }
-  const dbgpackage = {
-    hostname: 'twndbg1',
-    ip: '127.0.0.1',
-    owner: 'Jimmy'
-  }
-  // const kvmpackage = {
-  //   hostname: '18F_AI01',
-  //   ip: '127.0.0.1',
-  //   owner: 'Jimmy',
-  //   status: 'idle',
-  //   version: '1.0.0',
-  //   nasip: '127.0.0.1',
-  //   streamurl: 'http://test.com',
-  //   streamstatus: 'idle'
-  // }
   return (
     <div className='page_grid'>
       <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -81,7 +141,7 @@ export default function SelectLabels() {
             <em>None</em>
           </MenuItem>{
             kvmlist.map(function(object,i){
-              return <MenuItem value={i}>{object}</MenuItem>;
+              return <MenuItem value={object}>{object}</MenuItem>;
             })
           }
         </Select>
@@ -99,7 +159,7 @@ export default function SelectLabels() {
             <em>None</em>
           </MenuItem>{
             dbglist.map(function(object,i){
-              return <MenuItem value={i}>{object}</MenuItem>;
+              return <MenuItem value={object}>{object}</MenuItem>;
             })
           }
         </Select>
@@ -116,16 +176,16 @@ export default function SelectLabels() {
             <em>None</em>
           </MenuItem>{
             dutlist.map(function(object,i){
-              return <MenuItem value={i}>{object}</MenuItem>;
+              return <MenuItem value={object}>{object}</MenuItem>;
             })
           }
         </Select>
       </FormControl>
       <FormControl sx={{ m: 2, minWidth: 30 }}>
-        {(kvm != '' && dut != '' && dbg != '')?<Button>delete</Button>:<Button disabled>delete</Button>}
+        {(kvm != '' && dut != '' && dbg != '')?<Button onClick={deleteclick}>delete</Button>:<Button disabled>delete</Button>}
       </FormControl>
       <FormControl sx={{ m: 2, minWidth: 30 }}>
-        <Button variant="contained" >commit</Button>
+        <Button variant="contained" onClick={commitclick}>commit</Button>
       </FormControl>
       
       <Grid container sx={{ color: 'text.primary' }}>

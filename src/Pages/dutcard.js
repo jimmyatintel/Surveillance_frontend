@@ -25,7 +25,7 @@ export default function DutCard(props) {
                 DUT
             </Typography>
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {props.package.machine_name}
+                {props.package.machine}
             </Typography>
             <Typography variant="body2">
                 ssim: {props.package.ssim}

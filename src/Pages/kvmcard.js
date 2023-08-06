@@ -38,7 +38,7 @@ const card = (
 
 export default function KvmCard(props) {
   return (
-    <Box sx={{ maxWidth: 250 }}>
+    <Box sx={{ maxWidth: 270 }}>
       <Card variant="outlined">
         <React.Fragment>
             <CardContent>
@@ -57,11 +57,11 @@ export default function KvmCard(props) {
                 <br />
                 version: {props.package.version}
                 <br />
-                NAS ip: {props.package.nasip}
+                NAS ip: {props.package.nas_ip}
                 <br />
-                Stream url: {props.package.streamurl}
+                Stream url: {props.package.stream_url}
                 <br />
-                Stream status: {props.package.streamstatus}
+                Stream status: {props.package.stream_status}
                 <br />
             </Typography>
             </CardContent>
