@@ -14,7 +14,7 @@ const Router = () => (
       <Route exact path="/" component={Signin} />
       <Route path="/:name" component={ResponsiveAppBar} />
       <Switch>
-        <Route exact path="/player" component={Player} />
+        <Route exact path="/player/:device" component={Player} />
         <Route exact path="/monitor" component={Monitor} />
         <Route exact path="/mapping" component={SelectLabels} />
         <Route exact path="/upload" component={Uploads} />

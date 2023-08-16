@@ -10,3 +10,10 @@
   margin-top: 5%;
   margin-left: 5%;
 }
+.player-window{
+  max-height: 85vh;
+  max-width: 70vw;
+}
+.form-control{
+  max-width: 30vw;
+}

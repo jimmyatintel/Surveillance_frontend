@@ -32,6 +32,12 @@ export function get_dut_map(machine){
 export function get_dbg_map(ip){
     return axios.get(`${baseURL}/api/dbg/search?ip=${ip}`, headers);
 }
+export function get_ptoject_list(){
+    return axios.get(`${baseURL}/api/dbgunit/project_list`, headers);
+}
+export function get_project_dut(project){
+    return axios.get(`${baseURL}/api/dbgunit/project_info?project=${project}`, headers);
+}
 export async function submitmapping(kvm,dbg,dut){
     let res = window.confirm(`Please confirm you want to add this commit.`)
     if(res){
@@ -70,4 +76,34 @@ export function deletemapping(kvm){
           );
     }
     return res
+}
+export function uploadfile(dutfile,kvmfile,dbgfile,mapfile){
+    var formData = new FormData();
+    formData.append('dutfile', dutfile);
+    formData.append('kvmfile', kvmfile);
+    formData.append('dbgfile', dbgfile);
+    formData.append('mapfile', mapfile);
+//   formData.append('filename', filename);
+    const customHeader = {
+        headers: {
+        // Authorization: `Bearer ${getLocalStorageToken()}`,
+        "Content-Type": 'multipart/form-data',
+        },
+    };
+    return axios.post(`${baseURL}/api/upload`, formData, customHeader);
+}
+export function gen_self_define_video(device,hour,minute,duration){
+    if (hour==""){
+        return window.alert("Please select hour")
+    }
+    if (minute==""){
+        return window.alert("Please select minute")
+    }
+    let postform = {
+        "kvm_hostname": device,
+        "hour": hour,
+        "minute": minute,
+        "duration": duration
+    }
+    return axios.post(`${baseURL}/api/kvm/gen_video`, postform, headers);
 }
