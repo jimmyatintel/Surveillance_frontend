@@ -47,11 +47,6 @@ function DUT_Status(dut_status){
   return "Unknown"
 }
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-const dut_name = ["Odin_001","Odin_002","Odin_003","Odin_004","Odin_005","Odin_006","Odin_007","Odin_008","Odin_009"];
-const dut_status = [0,0,0,0,0,0,0,0,0];
-const dut_link = [""];
-const project_list = ["All", "Odin"]
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 export default function Monitor() {
@@ -138,10 +133,13 @@ export default function Monitor() {
                     }
                 </Select>
               </FormControl>
-              <Button variant="contained">search</Button>
             </Stack>
           </Container>
         </Box>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Start</Button>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Stop</Button>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Reset</Button>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} href ={"/spy/"+project}>Lyndon's function</Button>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
@@ -169,7 +167,7 @@ export default function Monitor() {
                   </CardContent>
                   <CardActions>
                     <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
-                    <Button size="small">Edit</Button>
+                    <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button>
                     <Button size="small" href ={"/player/"+kvm_host[i]}>player</Button>
                   </CardActions>
                 </Card>

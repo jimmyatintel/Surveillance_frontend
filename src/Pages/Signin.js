@@ -27,7 +27,7 @@ function Copyright(props) {
   );
 }
 function Signinclick(){
-  window.location.href = "/player";
+  window.location.href = "/monitor";
 
 }
 

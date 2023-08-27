@@ -17,3 +17,25 @@
 .form-control{
   max-width: 30vw;
 }
+.spy-pic{
+  max-width: 20vw;
+}
+.head-text {
+  position: relative;
+}
+.txt-on-image {
+ position: absolute;
+ left: 10 !important; 
+ z-index: 10;
+}
+.image-box{
+  max-width: 20vw;
+  position: relative;
+}
+.button-on-image{
+  max-width: 80%;
+}
+.cancel-button-on-image{
+  margin-left: 20%;
+  max-width: 10%;
+}
