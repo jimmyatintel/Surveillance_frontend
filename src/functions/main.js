@@ -105,7 +105,7 @@ export function gen_self_define_video(device,hour,minute,duration){
         "minute": minute,
         "duration": duration
     }
-    return axios.post(`${baseURL}/api/kvm/gen_video`, postform, headers);
+    return axios.get(`${baseURL}/api/kvm/gen_self_define_video`, {params: postform}, headers);
 }
 export function project_start(project){
     let postform = {

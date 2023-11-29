@@ -28,6 +28,17 @@ const Router = () => (
         <Route exact path="/spy/:project" component={Spy} />
       </Switch>
   </AuthenticatedTemplate>
+  {/* <Route exact path="/" component={Signin} />
+  <Route path="/" component={ResponsiveAppBar} />
+      <Switch>
+        <Route exact path="/player/:device" component={Player} />
+        <Route exact path="/edit/:device" component={Edit} />
+        <Route exact path="/" component={Monitor} />
+        <Route exact path="/monitor" component={Monitor} />
+        <Route exact path="/mapping" component={SelectLabels} />
+        <Route exact path="/upload" component={Uploads} />
+        <Route exact path="/spy/:project" component={Spy} />
+      </Switch> */}
   </BrowserRouter>
 );
 
