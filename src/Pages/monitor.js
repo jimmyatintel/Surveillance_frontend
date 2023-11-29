@@ -16,7 +16,7 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { get_ptoject_list, get_project_dut } from "../functions/main.js"
+import { get_ptoject_list, get_project_dut, project_start, project_stop } from "../functions/main.js"
 
 function Copyright() {
   return (
@@ -42,11 +42,28 @@ function DUT_Status(dut_status){
     return "Monitoring"
   }
   if(dut_status==3){
-    return "Detecting"
+    return "Normal"
   }
   return "Unknown"
 }
-
+// function REC_Status(record_status){
+//   if(record_status==1){
+//     return "Pending"
+//   }
+//   if(record_status==0){
+//     return "Stop"
+//   }
+//   if(record_status==2){
+//     return "Monitoring"
+//   }
+//   if(record_status==3){
+//     return "Normal"
+//   }
+//   return "Unknown"
+// }
+const errorimage = (error) => {
+  error.target.src = "error_pic.png";
+};
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 export default function Monitor() {
@@ -57,12 +74,20 @@ export default function Monitor() {
   const [dut_name, setdut_name] = React.useState([]);
   const [kvm_host, setkvm_host] = React.useState([]);
   const [cards, setcards] = React.useState([]);
+  const [record_status, setrecord_status] = React.useState([]);
+  const handlestart = ()=> {
+    project_start(project)
+  }
+  const handlestop = ()=> {
+    project_stop(project)
+  }
   const handleprojectChange = async (event) => {
       setdut_link([])
       setdut_status([])
       setdut_name([])
       setkvm_host([])
       setcards([])
+      setrecord_status([])
       setproject(event.target.value);
       get_project_dut(event.target.value).then(res => {
         console.log(1)
@@ -73,6 +98,7 @@ export default function Monitor() {
           setdut_link(dut_link => [...dut_link, dut.stream_url])
           setdut_status(dut_status => [...dut_status, dut.status])
           setkvm_host(kvm_host => [...kvm_host, dut.hostname])
+          setrecord_status(record_status => [...record_status, dut.record_status])
         })
       })
     };
@@ -86,6 +112,28 @@ export default function Monitor() {
       })
     })
   }, [])
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      console.log(project)
+      get_project_dut(project).then(res => {
+        setdut_link([])
+        setdut_status([])
+        setdut_name([])
+        setkvm_host([])
+        setcards([])
+        setrecord_status([])
+        res.data.duts.map(async function (dut,i){
+          setcards(cards => [...cards, i])
+          setdut_name(dut_name => [...dut_name, dut.machine_name])
+          setdut_link(dut_link => [...dut_link, dut.stream_url])
+          setdut_status(dut_status => [...dut_status, dut.status])
+          setkvm_host(kvm_host => [...kvm_host, dut.hostname])
+          setrecord_status(record_status => [...record_status, dut.record_status])
+        })
+      })
+    }, 5000);
+    return () => clearInterval(interval); // Cleanup the interval on unmount
+  }, [project]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -136,8 +184,8 @@ export default function Monitor() {
             </Stack>
           </Container>
         </Box>
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Start</Button>
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Stop</Button>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestart}>Start</Button>
+        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestop}>Stop</Button>
         <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Reset</Button>
         <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} href ={"/spy/"+project}>Lyndon's function</Button>
         <Container sx={{ py: 8 }} maxWidth="md">
@@ -154,7 +202,8 @@ export default function Monitor() {
                       // 16:9
                       pt: '56.25%',
                     }}
-                    image={"http://10.227.106.11:8000/image/"+kvm_host[i]+"/"+kvm_host[i]+".png"}
+                    image={"https://10.227.106.11:8000/image/"+kvm_host[i]+"/"+"cover.png"}
+
                     //image="http://10.227.106.11:8000/image/jimmytesting/jimmytesting.png"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
@@ -162,7 +211,10 @@ export default function Monitor() {
                       {dut_name[i]}
                     </Typography>
                     <Typography>
-                      Status: {DUT_Status(dut_status[i])}
+                      DUT: {DUT_Status(dut_status[i])}
+                    </Typography>
+                    <Typography>
+                      KVM: {record_status[i]}
                     </Typography>
                   </CardContent>
                   <CardActions>

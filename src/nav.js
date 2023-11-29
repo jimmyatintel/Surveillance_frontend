@@ -13,14 +13,23 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from 'react-router-dom';
+import { useMsal } from '@azure/msal-react';
+
 
 const pages = ['player', 'select', 'upload'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function ResponsiveAppBar() {
+export default function ResponsiveAppBar() {
+  const { instance, accounts } = useMsal();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const functions = [ signOutClickHandler, '', '', signOutClickHandler];
+  const signOutClickHandler = () => {
+    console.log("logout")
+    instance.logout({
+      account: accounts[0], // Specify the account to sign out, you can also pass null to sign out the current account
+    });
+  }
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -34,6 +43,7 @@ function ResponsiveAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+    // logoutRequest()
   };
 
   return (
@@ -160,9 +170,9 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+              {settings.map((setting,i) => (
+                <MenuItem key={setting} onClick={signOutClickHandler}>
+                  <Typography textAlign="center" >{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -172,4 +182,4 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-export default ResponsiveAppBar;
+// export default ResponsiveAppBar;

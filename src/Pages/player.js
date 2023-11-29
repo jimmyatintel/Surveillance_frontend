@@ -48,13 +48,13 @@ export default function Player() {
   const handletypeChange = (event)=>{
     settype(event.target.value)
     if (event.target.value=="All"){
-      setHlsUrl("http://10.227.106.11:8000/video/"+device+"/all.m3u8")
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
     }
     if (event.target.value=="Error"){
-      setHlsUrl("http://10.227.106.11:8000/video/"+device+"/error.m3u8")
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/error.m3u8")
     }
     if (event.target.value=="Self-define"){
-      setHlsUrl("http://10.227.106.11:8000/video/"+device+"/self-define.m3u8")
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/self-define.m3u8")
     }
   }
   const delay = ms => new Promise(
@@ -64,13 +64,13 @@ export default function Player() {
     await gen_self_define_video(device,hour,minute,duration)
     setHlsUrl("")
     await delay(1000);
-    setHlsUrl("http://10.227.106.11:8000/video/"+device+"/self-define.m3u8")
+    setHlsUrl("https://10.227.106.11:8000/video/"+device+"/self-define.m3u8")
   }
   const hour_list = [...Array(24).keys()]
   const minute_list = [...Array(60).keys()]
   const {device} =useParams()
   React.useEffect(() => {
-    setHlsUrl("http://10.227.106.11:8000/video/"+device+"/all.m3u8")
+    setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
   }, [])
   return (
     <div className="row justify-content-center">

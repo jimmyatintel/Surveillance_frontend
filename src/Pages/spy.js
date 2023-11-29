@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { get_ptoject_list, get_project_dut } from "../functions/main.js"
+import { get_ptoject_list, get_project_dut,get_kvm_status } from "../functions/main.js"
 import {useParams} from "react-router-dom";
 import "./styles.css";
 import Link from '@mui/material/Link';
@@ -9,13 +9,10 @@ import IconButton from '@mui/material/IconButton';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from '@mui/icons-material/Print';
-import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -30,8 +27,12 @@ export default function Spy() {
     const addtag = () =>{
         settagged(true)
     }
+    const setAIpic = () =>{
+        setAIstatus(!AIstatus)
+    }
     const [open, setOpen] = React.useState(false);
-
+    const [index, setindex] = React.useState(0);
+    const [isvalid, setisvalid] = React.useState(false);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -39,21 +40,46 @@ export default function Spy() {
     const handleClose = () => {
         setOpen(false);
     };
+    const handleClose2 = async () => {
+        setOpen(false);
+        const st = await get_kvm_status(all_kvm_host[index]);
+        console.log(st.data)
+        setdut_link(dut_link => [...dut_link, all_dut_link[index]])
+        setkvm_host(kvm_host => [...kvm_host, all_kvm_host[index]])
+        setkvm_status(kvm_status => [...kvm_status, st.data.stream_status])
+    };
+    const kvmnamecheck = (e) => {
+        const isincluded = all_kvm_host.includes(e.target.value)
+        console.log(isincluded)
+        console.log(e.target.value)
+        setisvalid(isincluded)
+        if(isincluded){
+            setindex(all_kvm_host.indexOf(e.target.value))
+        }
+    };
+    const errorimage = (error) => {
+        error.target.src = "error_pic.png";
+    };
     const [kvm_host, setkvm_host] = React.useState([]);
+    const [kvm_status, setkvm_status] = React.useState([]);
+    const [all_kvm_host, setall_kvm_host] = React.useState([]);
     const [random, setrandom] = React.useState(0);
+    const [all_dut_link, setall_dut_link] = React.useState([]);
     const [dut_link, setdut_link] = React.useState([]);
     const {project} =useParams();
     const [tagged, settagged] = React.useState(true);
+    const [AIstatus, setAIstatus] = React.useState(true);
     const actions = [
         { icon: <BackspaceIcon />, name: 'remove all tag', function: removetag },
         { icon: <AddCircleOutlineIcon />, name: 'add all tag', function: addtag },
-        { icon: <SaveIcon />, name: 'Save this combination' },
+        { icon: <CameraswitchIcon />, name: 'Switch between AI and non AI', function: setAIpic},
         { icon: <EditIcon />, name: 'Edit', function: handleClickOpen },
       ];
+
     React.useEffect(()=>{
         const interval = setInterval(() => {
             setrandom(random => random+1)
-            console.log(random)
+            // console.log(random)
           }, 1000);
           return () => clearInterval(interval);
     }, 1000);
@@ -71,6 +97,11 @@ export default function Spy() {
                 return oldValues.filter((_, i) => i !== index)
             }
         )
+        setkvm_status(
+            oldValues =>{
+                return oldValues.filter((_, i) => i !== index)
+            }
+        )
     }
     React.useEffect(()=>{
         get_project_dut(project).then(res => {
@@ -79,10 +110,13 @@ export default function Spy() {
             res.data.duts.map(async function (dut,i){
                 setdut_link(dut_link => [...dut_link, dut.stream_url])
                 setkvm_host(kvm_host => [...kvm_host, dut.hostname])
-                for (let i = 0; i < 19; i++){
-                    setdut_link(dut_link => [...dut_link, dut.stream_url])
-                    setkvm_host(kvm_host => [...kvm_host, dut.hostname])
-                }
+                setkvm_status(kvm_status => [...kvm_status,dut.record_status])
+            })
+          })
+        get_project_dut("ALL").then(res => {
+            res.data.duts.map(async function (dut,i){
+                setall_dut_link(all_dut_link => [...all_dut_link, dut.stream_url])
+                setall_kvm_host(all_kvm_host => [...all_kvm_host, dut.hostname])
             })
           })
     }, []);
@@ -91,10 +125,18 @@ export default function Spy() {
             <div className="row justify-content-center">
             {kvm_host.map((kvm_host,i) => (
                 <div className="image-box row ">
-                <img src={"http://10.227.106.11:8000/image/"+kvm_host+"/"+kvm_host+"_low.png?random="+random+i} className='spy-pic' />
+                {
+                    kvm_status[i] == "recording"?
+                    <img onError={errorimage}
+                    src={AIstatus==true? "https://10.227.106.11:8000/image/"+kvm_host+"/result_low.png?random="+random+i : "https://10.227.106.11:8000/image/"+kvm_host+"/"+kvm_host+"_low.png?random="+random+i} className='spy-pic' />
+                    :
+                    <img src="https://10.227.106.11:8000/image/discon.png" className='spy-pic' />
+                }
+                
                 <div className="row justify-content-center">
                     {
-                        tagged == true? <div><Button variant="" size="small" className='button-on-image' onClick={()=>viewpopout(dut_link[i])}>
+                        tagged == true? <div>
+                        <Button variant="" size="small" className='button-on-image' onClick={()=>viewpopout(dut_link[i])}>
                         {kvm_host}
                         </Button>
                         <IconButton aria-label="delete" className='cancel-button-on-image'onClick={()=>deletemachine(i)}>
@@ -108,9 +150,9 @@ export default function Spy() {
                     <DeleteIcon />
                     </IconButton> */}
                 </div>
-                {
+                {/* {
                     tagged == true? <Link href={dut_link[0]} className='txt-on-image'>{kvm_host}</Link>:<div></div>
-                }
+                } */}
                 </div>
             ))}
         </div>
@@ -129,25 +171,26 @@ export default function Spy() {
         ))}
     </SpeedDial>
     <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Add machine</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here. We
-            will send updates occasionally.
+            To add machine to this website, please enter the KVM name here. For example 18F_AI06 is a legal name.
           </DialogContentText>
           <TextField
+            error={!isvalid}
             autoFocus
             margin="dense"
             id="name"
-            label="Email Address"
+            label="KVM name"
             type="email"
             fullWidth
             variant="standard"
+            onChange={kvmnamecheck}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Subscribe</Button>
+          <Button onClick={handleClose2} disabled = {!isvalid}>Submit</Button>
         </DialogActions>
       </Dialog>
         </div>

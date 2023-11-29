@@ -107,3 +107,23 @@ export function gen_self_define_video(device,hour,minute,duration){
     }
     return axios.post(`${baseURL}/api/kvm/gen_video`, postform, headers);
 }
+export function project_start(project){
+    let postform = {
+        "project": project,
+        "operation": "start"
+    }
+    axios.post(`${baseURL}/api/kvm/project_status`, postform, headers);
+    window.alert("Project " + project + " has been started")
+}
+
+export function project_stop(project){
+    let postform = {
+        "project": project,
+        "operation": "stop"
+    }
+    axios.post(`${baseURL}/api/kvm/project_status`, postform, headers);
+    window.alert("Project " + project + " has been stopped")
+}
+export function get_kvm_status(kvm){
+    return axios.get(`${baseURL}/api/kvm/stream_status?action=${kvm}`, headers);
+}

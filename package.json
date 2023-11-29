@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@azure/msal-browser": "^3.1.0",
+    "@azure/msal-react": "^2.0.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.1",
@@ -19,6 +21,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hls-player": "^3.0.7",
+    "react-microsoft-login": "^2.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
     "react-timeit": "^1.2.12",
