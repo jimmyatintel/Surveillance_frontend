@@ -28,8 +28,7 @@ const Router = () => (
         <Route exact path="/spy/:project" component={Spy} />
       </Switch>
   </AuthenticatedTemplate>
-  {/* <Route exact path="/" component={Signin} />
-  <Route path="/" component={ResponsiveAppBar} />
+  {/* <Route path="/" component={ResponsiveAppBar} />
       <Switch>
         <Route exact path="/player/:device" component={Player} />
         <Route exact path="/edit/:device" component={Edit} />

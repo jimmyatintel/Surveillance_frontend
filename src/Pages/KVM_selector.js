@@ -14,6 +14,7 @@ import DbgCard from './dbgcard.js';
 import DutCard from './dutcard.js';
 import Button from '@mui/material/Button';
 import {get_kvm_list,get_dut_list,get_dbg_list,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,submitmapping,deletemapping} from "../functions/main.js"
+import { CenterFocusStrong } from '@mui/icons-material';
 
 export default function SelectLabels() {
   const [kvm, setkvm] = React.useState('');
@@ -189,23 +190,35 @@ export default function SelectLabels() {
       </FormControl>
       
       <Grid container sx={{ color: 'text.primary' }}>
-        <Grid item xs={3}>
+      <Grid item xs={1.5}></Grid>
+        <Grid container xs={3} 
+        direction="column"
+          alignItems="center"
+          justifyContent="center">
           <KeyboardIcon sx={{fontSize: 80, color: (kvm != '')? lightGreen["A700"]:grey }}></KeyboardIcon>
           {
             (kvm != '')? <KvmCard package={kvmpackage}></KvmCard> : <div></div>
           }
         </Grid>
-        <Grid item xs={3}>
+        <Grid container xs={3}
+        direction="column"
+        alignItems="center"
+        // justifyContent="center"
+        >
           <SettingsEthernetIcon fontSize="large" sx={{fontSize: 80, color: (dbg != '')? lightGreen["A700"]:grey }}></SettingsEthernetIcon>
           {
-             (dbg != '')? <DbgCard package={dbgpackage}></DbgCard> : <div></div>
+             (dbg != '')? <DbgCard sx={{ minWidth: 30 }} package={dbgpackage}></DbgCard> : <div></div>
           }
           
         </Grid>
-        <Grid item xs={3}>
+        <Grid container xs={3}
+        direction="column"
+        alignItems="center"
+        // justifyContent="center"
+        >
           <ComputerIcon fontSize="large" sx={{fontSize: 80, color: (dut != '')? lightGreen["A700"]:grey  }}></ComputerIcon>
           {
-             (dut != '')? <DutCard package={dutpackage}></DutCard> : <div></div>
+             (dut != '')? <DutCard  package={dutpackage}></DutCard> : <div></div>
           }
         </Grid>
       </Grid>

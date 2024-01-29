@@ -31,15 +31,18 @@ function Copyright() {
   );
 }
 
-function DUT_Status(dut_status){
-  if(dut_status==1){
-    return "Pending"
+function DUT_Status(dut_status,kvm_status){
+  if (kvm_status=="error"){
+    return "Unknown"
   }
   if(dut_status==0){
-    return "Stop"
+    return "BSOD"
+  }
+  if(dut_status==1){
+    return "Black"
   }
   if(dut_status==2){
-    return "Monitoring"
+    return "Restart"
   }
   if(dut_status==3){
     return "Normal"
@@ -67,7 +70,7 @@ const errorimage = (error) => {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 export default function Monitor() {
-  const [project, setproject] = React.useState('');
+  const [project, setproject] = React.useState('ALL');
   const [project_list, setproject_list] = React.useState(["ALL"]);
   const [dut_link, setdut_link] = React.useState([]);
   const [dut_status, setdut_status] = React.useState([]);
@@ -186,7 +189,7 @@ export default function Monitor() {
         </Box>
         <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestart}>Start</Button>
         <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestop}>Stop</Button>
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Reset</Button>
+        {/* <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Reset</Button> */}
         <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} href ={"/spy/"+project}>Lyndon's function</Button>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
@@ -203,7 +206,10 @@ export default function Monitor() {
                       pt: '56.25%',
                     }}
                     image={"https://10.227.106.11:8000/image/"+kvm_host[i]+"/"+"cover.png"}
+                    onError={e => {
 
+                      e.target.src = "error_pic.png";
+                    }}
                     //image="http://10.227.106.11:8000/image/jimmytesting/jimmytesting.png"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
@@ -211,7 +217,7 @@ export default function Monitor() {
                       {dut_name[i]}
                     </Typography>
                     <Typography>
-                      DUT: {DUT_Status(dut_status[i])}
+                      DUT: {DUT_Status(dut_status[i],record_status[i])}
                     </Typography>
                     <Typography>
                       KVM: {record_status[i]}
@@ -219,7 +225,7 @@ export default function Monitor() {
                   </CardContent>
                   <CardActions>
                     <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
-                    <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button>
+                    {/* <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button> */}
                     <Button size="small" href ={"/player/"+kvm_host[i]}>player</Button>
                   </CardActions>
                 </Card>

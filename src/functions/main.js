@@ -127,3 +127,45 @@ export function project_stop(project){
 export function get_kvm_status(kvm){
     return axios.get(`${baseURL}/api/kvm/stream_status?action=${kvm}`, headers);
 }
+export function dut_modify(name,ssim,threshold){
+    let postform = {
+        "machine": name,
+        "ssim": ssim,
+        "threshold": threshold
+    }
+    return axios.get(`${baseURL}/api/dut/modify`, {params: postform}, headers);
+}
+export function dut_info(name){
+    let postform = {
+        "machine": name,
+    }
+    return axios.get(`${baseURL}/api/dut/info`, {params: postform}, headers);
+}
+export function dbg_modify(name,owner){
+    let postform = {
+        "ip": name,
+        "owner": owner
+    }
+    return axios.get(`${baseURL}/api/dbg/modify`, {params: postform}, headers);
+}
+export function dbg_info(name){
+    let postform = {
+        "ip": name,
+    }
+    return axios.get(`${baseURL}/api/dbg/info`, {params: postform}, headers);
+}
+export function kvm_modify(hostname,owner, ip, nas){
+    let postform = {
+        "hostname": hostname,
+        "owner": owner,
+        "ip": ip,
+        "nas_ip": nas,
+    }
+    return axios.get(`${baseURL}/api/kvm/modify`, {params: postform}, headers);
+}
+export function kvm_info(hostname){
+    let postform = {
+        "hostname": hostname
+    }
+    return axios.get(`${baseURL}/api/kvm/info`, {params: postform}, headers);
+}
