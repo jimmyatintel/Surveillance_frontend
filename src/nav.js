@@ -23,13 +23,13 @@ export default function ResponsiveAppBar() {
   const { instance, accounts } = useMsal();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const functions = [ signOutClickHandler, '', '', signOutClickHandler];
-  const signOutClickHandler = () => {
-    console.log("logout")
-    instance.logout({
-      account: accounts[0], // Specify the account to sign out, you can also pass null to sign out the current account
-    });
-  }
+  // const functions = [ signOutClickHandler, '', '', signOutClickHandler];
+  // const signOutClickHandler = () => {
+  //   console.log("logout")
+  //   instance.logout({
+  //     account: accounts[0], // Specify the account to sign out, you can also pass null to sign out the current account
+  //   });
+  // }
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -303,11 +303,11 @@ export default function ResponsiveAppBar() {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            {settings.map((setting,i) => (
+            {/* {settings.map((setting,i) => (
               <MenuItem key={setting} onClick={signOutClickHandler}>
                 <Typography textAlign="center" >{setting}</Typography>
               </MenuItem>
-            ))}
+            ))} */}
           </Menu>
         </Box>
       </Toolbar>

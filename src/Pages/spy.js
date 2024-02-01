@@ -5,6 +5,8 @@ import "./styles.css";
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 import IconButton from '@mui/material/IconButton';  
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -19,6 +21,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
+import Modal from '@mui/material/Modal';
 
 export default function Spy() {
     const removetag = () =>{
@@ -33,6 +37,7 @@ export default function Spy() {
     const [open, setOpen] = React.useState(false);
     const [index, setindex] = React.useState(0);
     const [isvalid, setisvalid] = React.useState(false);
+    const [Locked, setLocked] = React.useState([true]);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -61,6 +66,7 @@ export default function Spy() {
         error.target.src = "error_pic.png";
     };
     const [kvm_host, setkvm_host] = React.useState([]);
+    const [dut_name, setdut_name] = React.useState([]);
     const [kvm_status, setkvm_status] = React.useState([]);
     const [all_kvm_host, setall_kvm_host] = React.useState([]);
     const [random, setrandom] = React.useState(0);
@@ -69,6 +75,8 @@ export default function Spy() {
     const {project} =useParams();
     const [tagged, settagged] = React.useState(true);
     const [AIstatus, setAIstatus] = React.useState(true);
+    const [openmodal, setopenmodal] = React.useState(false);
+    const [zoomtarget, setzoomtarget] = React.useState(0);
     const actions = [
         { icon: <BackspaceIcon />, name: 'remove all tag', function: removetag },
         { icon: <AddCircleOutlineIcon />, name: 'add all tag', function: addtag },
@@ -81,11 +89,29 @@ export default function Spy() {
             setrandom(random => random+1)
             // console.log(random)
           }, 1000);
+
           return () => clearInterval(interval);
     }, 1000);
     const viewpopout = (url)=> {
         window.open(url, "_blank", "noreferrer");
       }
+    const lockmachine = (index)=> {
+        Locked[index] = true
+        setLocked(Locked)
+
+    }
+    const unlockmachine = (index)=> {
+        Locked[index] = false
+        setLocked(Locked)
+    }
+    const zoommachine = (index)=> {
+        setzoomtarget(index)
+        setopenmodal(true)
+    }
+    const handleModalClose =()=>{
+        setopenmodal(false)
+        setzoomtarget(0)
+    }
     const deletemachine = (index)=> {
         setkvm_host(
             oldValues =>{
@@ -102,17 +128,25 @@ export default function Spy() {
                 return oldValues.filter((_, i) => i !== index)
             }
         )
+        setLocked(
+            oldValues =>{
+                return oldValues.filter((_, i) => i !== index)
+            }
+        )
     }
     React.useEffect(()=>{
         get_project_dut(project).then(res => {
-            console.log(1)
             console.log(res.data)
+            
             res.data.duts.map(async function (dut,i){
                 setdut_link(dut_link => [...dut_link, dut.stream_url])
+                setdut_name(dut_name => [...dut_name, dut.machine_name])
                 setkvm_host(kvm_host => [...kvm_host, dut.hostname])
                 setkvm_status(kvm_status => [...kvm_status,dut.record_status])
+                setLocked(Locked => [...Locked,false])
             })
           })
+          
         get_project_dut("ALL").then(res => {
             res.data.duts.map(async function (dut,i){
                 setall_dut_link(all_dut_link => [...all_dut_link, dut.stream_url])
@@ -122,6 +156,20 @@ export default function Spy() {
     }, []);
     return (
         <div>
+             <Modal open={openmodal} onClose={handleModalClose}>
+             <div style={{ position: 'absolute', top: '50%', left: '30%', transform: 'translate(-50%, -50%)' }}>
+                {
+                    Locked[zoomtarget] == true?
+                    <IconButton aria-label="lock" className='cancel-button-on-image'onClick={()=>unlockmachine(zoomtarget)}>
+                    <LockIcon />
+                    </IconButton>:
+                    <IconButton aria-label="unlock" className='cancel-button-on-image'onClick={()=>lockmachine(zoomtarget)}>
+                    <LockOpenIcon />
+                    </IconButton>
+                }
+                    <img src={"https://10.227.106.11:8000/image/"+kvm_host[zoomtarget]+"/result_low.png?random="+random }alt="Clipped Image" style={{ minWidth: '300%', minHeight: '300%' }} />
+                </div>
+            </Modal>
             <div className="row justify-content-center">
             {kvm_host.map((kvm_host,i) => (
                 <div className="image-box row ">
@@ -137,11 +185,24 @@ export default function Spy() {
                     {
                         tagged == true? <div>
                         <Button variant="" size="small" className='button-on-image' onClick={()=>viewpopout(dut_link[i])}>
-                        {kvm_host}
+                        {dut_name[i]}
                         </Button>
                         <IconButton aria-label="delete" className='cancel-button-on-image'onClick={()=>deletemachine(i)}>
                         <DeleteIcon />
-                        </IconButton></div>: <div></div>
+                        </IconButton>
+                        {
+                        Locked[i] == true?
+                        <IconButton aria-label="lock" className='cancel-button-on-image'onClick={()=>unlockmachine(i)}>
+                        <LockIcon />
+                        </IconButton>:
+                        <IconButton aria-label="unlock" className='cancel-button-on-image'onClick={()=>lockmachine(i)}>
+                        <LockOpenIcon />
+                        </IconButton>
+                        }
+                        <IconButton aria-label="zoom" className='cancel-button-on-image'onClick={()=>zoommachine(i)}>
+                        < ZoomOutMapIcon />
+                        </IconButton>
+                        </div>: <div></div>
                     }
                     {/* <Button variant="" size="small" className='button-on-image' onClick={()=>viewpopout(dut_link[i])}>
                     {kvm_host}

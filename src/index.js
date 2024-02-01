@@ -15,15 +15,15 @@ const config = {
   }
 };
 
-const publicClientApplication = new PublicClientApplication(config);
+// const publicClientApplication = new PublicClientApplication(config);
 
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(
   <StrictMode>
-    <MsalProvider instance={publicClientApplication}>
+    {/* <MsalProvider instance={publicClientApplication}>/ */}
         <App />
-    </ MsalProvider>
+    {/* </ MsalProvider> */}
     </StrictMode>,
   rootElement
 );
