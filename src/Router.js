@@ -13,7 +13,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-reac
 
 const Router = () => (
   <BrowserRouter>
-  {/* <UnauthenticatedTemplate>
+  <UnauthenticatedTemplate>
     <Route exact path="/" component={Signin} />
   </UnauthenticatedTemplate>
   <AuthenticatedTemplate>
@@ -27,8 +27,8 @@ const Router = () => (
         <Route exact path="/upload" component={Uploads} />
         <Route exact path="/spy/:project" component={Spy} />
       </Switch>
-  </AuthenticatedTemplate> */}
-  <Route path="/" component={ResponsiveAppBar} />
+  </AuthenticatedTemplate>
+  {/* <Route path="/" component={ResponsiveAppBar} />
       <Switch>
         <Route exact path="/player/:device" component={Player} />
         <Route exact path="/edit/:device" component={Edit} />
@@ -37,7 +37,7 @@ const Router = () => (
         <Route exact path="/mapping" component={SelectLabels} />
         <Route exact path="/upload" component={Uploads} />
         <Route exact path="/spy/:project" component={Spy} />
-      </Switch>
+      </Switch> */}
   </BrowserRouter>
 );
 

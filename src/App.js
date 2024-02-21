@@ -20,9 +20,9 @@ const pca = new PublicClientApplication(msalConfiguration);
 export default function App() {
   return (
     <div className="App">
-      {/* <MsalProvider instance={InteractionType.Redirect}> */}
+      <MsalProvider instance={InteractionType.Redirect}>
         <Router />
-      {/* </MsalProvider> */}
+      </MsalProvider>
     </div>
   );
 }
