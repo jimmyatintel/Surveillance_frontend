@@ -16,7 +16,7 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { get_ptoject_list, get_project_dut, project_start, project_stop } from "../functions/main.js"
+import { get_ptoject_list, get_project_dut, project_start, project_stop, cutURLTail } from "../functions/main.js"
 
 function Copyright() {
   return (
@@ -68,6 +68,7 @@ const errorimage = (error) => {
   error.target.src = "error_pic.png";
 };
 // TODO remove, this demo shouldn't need to reset the theme.
+
 const defaultTheme = createTheme();
 export default function Monitor() {
   const [project, setproject] = React.useState('ALL');
@@ -227,6 +228,7 @@ export default function Monitor() {
                     <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
                     {/* <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button> */}
                     <Button size="small" href ={"/player/"+kvm_host[i]}>player</Button>
+                    <Button size="small" onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>KVM</Button>
                   </CardActions>
                 </Card>
               </Grid>

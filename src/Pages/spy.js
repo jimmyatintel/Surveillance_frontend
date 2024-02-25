@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { get_ptoject_list, get_project_dut,get_kvm_status } from "../functions/main.js"
+import { get_ptoject_list, get_project_dut,get_kvm_status,unlock_screen,lock_screen, cutURLTail } from "../functions/main.js"
 import {useParams} from "react-router-dom";
 import "./styles.css";
 import Link from '@mui/material/Link';
@@ -37,7 +37,7 @@ export default function Spy() {
     const [open, setOpen] = React.useState(false);
     const [index, setindex] = React.useState(0);
     const [isvalid, setisvalid] = React.useState(false);
-    const [Locked, setLocked] = React.useState([true]);
+    const [Locked, setLocked] = React.useState([]);
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -98,11 +98,12 @@ export default function Spy() {
     const lockmachine = (index)=> {
         Locked[index] = true
         setLocked(Locked)
-
+        lock_screen(dut_name[index])
     }
     const unlockmachine = (index)=> {
         Locked[index] = false
         setLocked(Locked)
+        unlock_screen(dut_name[index])
     }
     const zoommachine = (index)=> {
         setzoomtarget(index)
@@ -137,16 +138,19 @@ export default function Spy() {
     React.useEffect(()=>{
         get_project_dut(project).then(res => {
             console.log(res.data)
-            
             res.data.duts.map(async function (dut,i){
                 setdut_link(dut_link => [...dut_link, dut.stream_url])
                 setdut_name(dut_name => [...dut_name, dut.machine_name])
                 setkvm_host(kvm_host => [...kvm_host, dut.hostname])
                 setkvm_status(kvm_status => [...kvm_status,dut.record_status])
-                setLocked(Locked => [...Locked,false])
+                if (dut.lock_coord===""){
+                    setLocked(Locked => [...Locked,false])
+                }else{
+                    setLocked(Locked => [...Locked, true])
+                }
             })
           })
-          
+        // maintain the complete list for adding machine
         get_project_dut("ALL").then(res => {
             res.data.duts.map(async function (dut,i){
                 setall_dut_link(all_dut_link => [...all_dut_link, dut.stream_url])

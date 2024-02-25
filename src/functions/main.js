@@ -169,3 +169,22 @@ export function kvm_info(hostname){
     }
     return axios.get(`${baseURL}/api/kvm/info`, {params: postform}, headers);
 }
+export function lock_screen(hostname){
+    let postform = {
+        "machine": hostname
+    }
+    return axios.get(`${baseURL}/api/dut/lockframe`, {params: postform}, headers);
+}
+export function unlock_screen(hostname){
+    let postform = {
+        "machine": hostname
+    }
+    return axios.get(`${baseURL}/api/dut/unlockframe`, {params: postform}, headers);
+}
+export function cutURLTail(url) {
+    // Create a new URL object
+    const parsedURL = new URL(url);
+
+    // Reconstruct the URL with only the protocol and host
+    return `${parsedURL.protocol}//${parsedURL.hostname}`;
+}
