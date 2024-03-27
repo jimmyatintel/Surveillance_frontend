@@ -35,7 +35,7 @@ export function get_dbg_map(ip){
 export function get_ptoject_list(){
     return axios.get(`${baseURL}/api/dbgunit/project_list`, headers);
 }
-export function get_project_dut(project){
+export function get_project_unit(project){
     return axios.get(`${baseURL}/api/dbgunit/project_info?project=${project}`, headers);
 }
 export async function submitmapping(kvm,dbg,dut){
@@ -168,4 +168,23 @@ export function kvm_info(hostname){
         "hostname": hostname
     }
     return axios.get(`${baseURL}/api/kvm/info`, {params: postform}, headers);
+}
+export function lock_screen(hostname){
+    let postform = {
+        "machine": hostname
+    }
+    return axios.get(`${baseURL}/api/dut/lockframe`, {params: postform}, headers);
+}
+export function unlock_screen(hostname){
+    let postform = {
+        "machine": hostname
+    }
+    return axios.get(`${baseURL}/api/dut/unlockframe`, {params: postform}, headers);
+}
+export function cutURLTail(url) {
+    // Create a new URL object
+    const parsedURL = new URL(url);
+
+    // Reconstruct the URL with only the protocol and host
+    return `${parsedURL.protocol}//${parsedURL.hostname}`;
 }

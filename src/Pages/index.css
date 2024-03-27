@@ -1,0 +1,86 @@
+.textform{
+  margin-left: 5vw;
+  margin-top: 5vh;
+}
+.input{
+  margin-top: 3vh;
+  
+  /* justify-content: center; */
+}
+.submit-but{
+  width: 5vw;
+  /* vertical-align: middle; */
+  text-align:center;
+  display: inline-block;
+}
+.maillist{
+  margin-top: 2vh;
+}
+.subbutton{
+  display: inline-block;
+}
+.fill{
+  width: 100%;
+}
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 10px solid #f3f3f3; /* Light grey */
+  border-top: 10px solid #383636; /* Black */
+  border-radius: 50%;
+  animation: spinner 1.5s linear infinite;
+}
+.fixbox{
+  height: 10vh;
+  position: fixed;
+  width: 10vw;
+}
+.btn-reset {
+  color: white;
+  width: 5em;
+  background-color: grey;
+  border-color: white;
+  border-radius: 0.3em;
+  border-width: 0.15em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.btn-setting {
+  color: white;
+  width: 5em;
+  background-color: #be7a3a;
+  border-color: white;
+  border-radius: 0.3em;
+  border-width: 0.15em;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.btn-start {
+  color: white !important;
+  background-color: #53c044 !important;
+  border-color: white !important;
+  /* border-radius: 0.3em;
+  border-width: 0.15em; */
+
+}
+
+.btn-stop {
+  color: white !important;
+  width: 5em;
+  background-color: #c72f2f !important;
+  border-color: white !important;
+  /* border-radius: 0.3em;
+  border-width: 0.15em;
+  padding-top: 2px;
+  padding-bottom: 2px; */
+}

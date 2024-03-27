@@ -16,7 +16,7 @@ import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { get_ptoject_list, get_project_dut, project_start, project_stop } from "../functions/main.js"
+import { get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail } from "../functions/main.js"
 
 function Copyright() {
   return (
@@ -68,6 +68,7 @@ const errorimage = (error) => {
   error.target.src = "error_pic.png";
 };
 // TODO remove, this demo shouldn't need to reset the theme.
+
 const defaultTheme = createTheme();
 export default function Monitor() {
   const [project, setproject] = React.useState('ALL');
@@ -92,7 +93,7 @@ export default function Monitor() {
       setcards([])
       setrecord_status([])
       setproject(event.target.value);
-      get_project_dut(event.target.value).then(res => {
+      get_project_unit(event.target.value).then(res => {
         console.log(1)
         console.log(res.data)
         res.data.duts.map(async function (dut,i){
@@ -116,9 +117,8 @@ export default function Monitor() {
     })
   }, [])
   React.useEffect(() => {
-    const interval = setInterval(() => {
       console.log(project)
-      get_project_dut(project).then(res => {
+      get_project_unit(project).then(res => {
         setdut_link([])
         setdut_status([])
         setdut_name([])
@@ -134,9 +134,7 @@ export default function Monitor() {
           setrecord_status(record_status => [...record_status, dut.record_status])
         })
       })
-    }, 5000);
-    return () => clearInterval(interval); // Cleanup the interval on unmount
-  }, [project]);
+    }, [project]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -187,10 +185,20 @@ export default function Monitor() {
             </Stack>
           </Container>
         </Box>
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestart}>Start</Button>
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} onClick={handlestop}>Stop</Button>
+        {
+          project==="ALL"?
+          <div>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Lyndon's function</Button>
+          </div>
+          :<div>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestart}>Start</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestop}>Stop</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/setting/"+project}>Setting</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Lyndon's function</Button>
+          </div>
+        }
+        
         {/* <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}}>Reset</Button> */}
-        <Button variant="contained" sx={{marginLeft: 5, marginRight: 5}} href ={"/spy/"+project}>Lyndon's function</Button>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
@@ -227,6 +235,7 @@ export default function Monitor() {
                     <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
                     {/* <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button> */}
                     <Button size="small" href ={"/player/"+kvm_host[i]}>player</Button>
+                    <Button size="small" onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>KVM</Button>
                   </CardActions>
                 </Card>
               </Grid>
