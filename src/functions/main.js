@@ -8,6 +8,9 @@ const headers = {
 export function get_kvm_list(){
     return axios.get(`${baseURL}/api/kvm/list`, headers);
 }
+export function get_floors(){
+    return axios.get(`${baseURL}/api/project/floor`, headers);
+}
 export function get_dut_list(){
     return axios.get(`${baseURL}/api/dut/list`, headers);
 }

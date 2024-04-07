@@ -13,11 +13,14 @@ import KvmCard from './kvmcard.js';
 import DbgCard from './dbgcard.js';
 import DutCard from './dutcard.js';
 import Button from '@mui/material/Button';
-import {get_kvm_list,get_dut_list,get_dbg_list,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,submitmapping,deletemapping} from "../functions/main.js"
+import {get_kvm_list,get_dut_list,get_dbg_list,get_floors,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,submitmapping,deletemapping} from "../functions/main.js"
 import { CenterFocusStrong } from '@mui/icons-material';
 
 export default function SelectLabels() {
   const [kvm, setkvm] = React.useState('');
+  const [floors, setfloors] = React.useState([]);
+  const [floors_amount, setfloors_amount] = React.useState([]);
+  const [floor, setfloor] = React.useState('');
   const [kvmlist, setkvmlist] = React.useState([]);
   const [dbg, setdbg] = React.useState('');
   const [dbglist, setdbglist] = React.useState([]);
@@ -28,30 +31,31 @@ export default function SelectLabels() {
   const [dutpackage,setdutpackage] = React.useState({});
   const KVMhandleChange = async function (event) {
     // console.log(event.target.value)
-    await setkvm(event.target.value)
-    if(dbg==='' && dut===''){
-      get_kvm_map(event.target.value).then(res => {
-        console.log(res.data)
-        if(res.data.dbghost_ip!==""){
-          setdbg(res.data.dbghost_ip)
-          get_dbg_detail(res.data.dbghost_ip).then(res => {
-            console.log(res.data)
-            setdbgpackage(res.data)
-          })
-        }
-        if(res.data.dut_machine!==""){
-          setdut(res.data.dut_machine)
-          get_dut_detail(res.data.dut_machine).then(res => {
-            console.log(res.data)
-            setdutpackage(res.data)
-          })
-        }
-      })
-    }
-    get_kvm_detail(event.target.value).then(res => {
-      console.log(res.data)
-      setkvmpackage(res.data)
-    })
+    await setfloor(event.target.value)
+    // await setkvm()
+    // if(dbg==='' && dut===''){
+    //   get_kvm_map(event.target.value).then(res => {
+    //     console.log(res.data)
+    //     if(res.data.dbghost_ip!==""){
+    //       setdbg(res.data.dbghost_ip)
+    //       get_dbg_detail(res.data.dbghost_ip).then(res => {
+    //         console.log(res.data)
+    //         setdbgpackage(res.data)
+    //       })
+    //     }
+    //     if(res.data.dut_machine!==""){
+    //       setdut(res.data.dut_machine)
+    //       get_dut_detail(res.data.dut_machine).then(res => {
+    //         console.log(res.data)
+    //         setdutpackage(res.data)
+    //       })
+    //     }
+    //   })
+    // }
+    // get_kvm_detail(event.target.value).then(res => {
+    //   console.log(res.data)
+    //   setkvmpackage(res.data)
+    // })
   };
   const DBGhandleChange = (event) => {
     setdbg(event.target.value);
@@ -118,37 +122,41 @@ export default function SelectLabels() {
 
   }
   React.useEffect(() => {
-    get_kvm_list().then(res => {
-      setkvmlist(res.data.hostnames)
+    get_floors().then(res => {
+      setfloors(res.data.floor)
+      setfloors_amount(res.data.amount)
     })
-    get_dut_list().then(res => {
-      setdutlist(res.data.machines)
-    })
-    get_dbg_list().then(res => {
-      setdbglist(res.data.ips)
-    })
+    // get_kvm_list().then(res => {
+    //   setkvmlist(res.data.hostnames)
+    // })
+    // get_dut_list().then(res => {
+    //   setdutlist(res.data.machines)
+    // })
+    // get_dbg_list().then(res => {
+    //   setdbglist(res.data.ips)
+    // })
   },[]);
   return (
     <div className='page_grid'>
       <FormControl sx={{ m: 1, minWidth: 120 }}>
-        <InputLabel id="demo-simple-select-helper-label">KVM</InputLabel>
+        <InputLabel id="demo-simple-select-helper-label">Floor</InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
-          value={kvm}
-          label="KVM"
+          value={floor}
+          label="Floor"
           onChange={KVMhandleChange}
         >
           <MenuItem value="" >
             <em>None</em>
           </MenuItem>{
-            kvmlist.map(function(object,i){
+            floors.map(function(object,i){
               return <MenuItem value={object}>{object}</MenuItem>;
             })
           }
         </Select>
         {/* <FormHelperText>With label + helper text</FormHelperText> */}
       </FormControl>
-      <FormControl sx={{ m: 1, minWidth: 180 }}>
+      {/* <FormControl sx={{ m: 1, minWidth: 180 }}>
         <InputLabel id="demo-simple-select-helper-label">Debug Host</InputLabel>
         <Select
           labelId="demo-simple-select-helper-label"
@@ -181,7 +189,7 @@ export default function SelectLabels() {
             })
           }
         </Select>
-      </FormControl>
+      </FormControl> */}
       <FormControl sx={{ m: 2, minWidth: 30 }}>
         {(kvm != '' && dut != '' && dbg != '')?<Button onClick={deleteclick}>delete</Button>:<Button disabled>delete</Button>}
       </FormControl>
