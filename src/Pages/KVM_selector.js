@@ -33,7 +33,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import {submitmapping,Delete_kvm_message,get_kvm_message,Insert_kvm_message,get_hostnames_by_floor,get_freedut_list,get_freedbh_list,get_floors,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,deletemapping} from "../functions/main.js"
+import {get_ptoject_list,submitmapping,Delete_kvm_message,get_kvm_message,Insert_kvm_message,get_hostnames_by_floor,get_freedut_list,get_freedbh_list,get_floors,get_kvm_detail,get_dut_detail,get_dbg_detail,get_kvm_map,get_dut_map,get_dbg_map,deletemapping} from "../functions/main.js"
 import { CenterFocusStrong } from '@mui/icons-material';
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
@@ -68,6 +68,8 @@ export default function SelectLabels() {
   const [floors_amount, setfloors_amount] = React.useState([]);
   const [floor, setfloor] = React.useState('');
   const [kvmlist, setkvmlist] = React.useState([]);
+  const [project, setproject] = React.useState('');
+  const [projectlist, setprojectlist] = React.useState([]);
   const [dbh, setdbh] = React.useState('');
   const [dbhlist, setdbhlist] = React.useState([]);
   const [dut, setdut] = React.useState('');
@@ -140,6 +142,12 @@ export default function SelectLabels() {
       }
     })
   };
+  const handleadd = () =>{
+    submitmapping(add_target,dbh,dut).then(res =>{
+      reloadkvminfo()
+    })
+    handleCloseadddialog()
+  }
   const handledelete = (hostname) =>{
     deletemapping(hostname).then(res =>{
       reloadkvminfo()
@@ -154,10 +162,15 @@ export default function SelectLabels() {
     setopenadddialog(true)
     setadd_target(kvmlist[index])
     get_freedut_list().then(res =>{
-      setdut(res.data.machines)
+      setdutlist(res.data.machines)
     })
     get_freedbh_list().then(res =>{
-      setdbh(res.data.ips)
+      // console.log(res.data.ips)
+      setdbhlist(res.data.ips)
+    })
+    get_ptoject_list().then(res =>{
+      // console.log(res.data.ips)
+      setprojectlist(res.data.projects)
     })
   }
   const handleClosedeletedialog = () =>{
@@ -186,9 +199,14 @@ export default function SelectLabels() {
   }
   const handleCloseadddialog = () =>{
     setopenadddialog(false)
+    setdbh('')
+    setdut('')
   }
   const dbhhandleChange = (event) => {
     setdbh(event.target.value)
+  }
+  const projecthandleChange = (event) => {
+    setproject(event.target.value)
   }
   const duthandleChange = (event) => {
     setdut(event.target.value)
@@ -498,19 +516,14 @@ export default function SelectLabels() {
                 DBH
               </Fab>
                 <Select
-                  multiple
                   displayEmpty
                   value={dbh}
                   onChange={dbhhandleChange}
-                  renderValue={(selected) => {
-                    if (selected.length === 0) {
-                      return <em>DBH</em>;
-                    }
-        
-                    return selected.join(', ');
-                  }}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
+                  <MenuItem disabled value="">
+                    <em>DBH</em>
+                  </MenuItem>
                   {
                     dbhlist.map(function(object,i){
                       return <MenuItem value={object}>{object}</MenuItem>;
@@ -526,19 +539,14 @@ export default function SelectLabels() {
                 DUT
               </Fab>
               <Select
-                  multiple
                   displayEmpty
                   value={dut}
                   onChange={duthandleChange}
-                  renderValue={(selected) => {
-                    if (selected.length === 0) {
-                      return <em>DUT</em>;
-                    }
-        
-                    return selected.join(', ');
-                  }}
                   inputProps={{ 'aria-label': 'Without label' }}
                 >
+                  <MenuItem disabled value="">
+                    <em>DUT</em>
+                    </MenuItem>
                   {
                     dutlist.map(function(object,i){
                       return <MenuItem value={object}>{object}</MenuItem>;
@@ -548,8 +556,32 @@ export default function SelectLabels() {
             </Stack>
             </Grid>
           </Grid>
+          <Grid item xs={12} sm={6} md={12} sx={{ mt: 1, minWidth: 500 , padding: 0}}>
+            <Stack spacing={1}>
+              <Fab variant="extended" color="primary" size="small">
+                <NavigationIcon sx={{ mr: 1 }} />
+                Project
+              </Fab>
+              <Select
+                  displayEmpty
+                  value={project}
+                  onChange={projecthandleChange}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                >
+                  <MenuItem disabled value="">
+                    <em>Project</em>
+                    </MenuItem>
+                  {
+                    projectlist.map(function(object,i){
+                      return <MenuItem value={object}>{object}</MenuItem>;
+                    })
+                  }
+                </Select>
+            </Stack>
+            </Grid>
         </DialogContent>
         <DialogActions>
+          <Button onClick={handleadd} >Submit</Button>
           <Button onClick={handleCloseadddialog} autoFocus>Close</Button>
         </DialogActions>
       </Dialog>

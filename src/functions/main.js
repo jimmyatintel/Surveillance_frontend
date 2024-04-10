@@ -53,13 +53,14 @@ export function get_ptoject_list(){
 export function get_project_unit(project){
     return axios.get(`${baseURL}/api/dbgunit/project_info?project=${project}`, headers);
 }
-export async function submitmapping(kvm,dbg,dut){
+export async function submitmapping(kvm,dbg,dut,project){
     let res = window.confirm(`Please confirm you want to add this commit.`)
     if(res){
         let postform = {
             "kvm_hostname": kvm,
             "dbghost_ip": dbg, 
-            "dut_machine": dut
+            "dut_machine": dut,
+            "project": project
         }
         let err = false
         await axios.post(`${baseURL}/api/kvm/kvm_mapping`,postform, headers).catch((reason) => {
