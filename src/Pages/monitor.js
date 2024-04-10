@@ -218,6 +218,7 @@ export default function Monitor() {
 
                       e.target.src = "error_pic.png";
                     }}
+                    loading="lazy"
                     //image="http://10.227.106.11:8000/image/jimmytesting/jimmytesting.png"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>

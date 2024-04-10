@@ -7,8 +7,8 @@
 }
 .page_grid{
   justify-content: center;
-  margin-top: 5%;
-  margin-left: 5%;
+  /* margin-top: 5%; */
+  /* margin-left: 5%; */
 }
 .player-window{
   max-height: 85vh;

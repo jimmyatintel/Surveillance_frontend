@@ -8,8 +8,23 @@ const headers = {
 export function get_kvm_list(){
     return axios.get(`${baseURL}/api/kvm/list`, headers);
 }
+export function get_kvm_message(hostname){
+    return axios.get(`${baseURL}/api/kvm/get_message?hostname=${hostname}`, headers);
+}
+export function get_floors(){
+    return axios.get(`${baseURL}/api/kvm/floor`, headers);
+}
+export function get_hostnames_by_floor(floor){
+    return axios.get(`${baseURL}/api/kvm/hostnames?floor=${floor}`, headers);
+}
 export function get_dut_list(){
     return axios.get(`${baseURL}/api/dut/list`, headers);
+}
+export function get_freedut_list(){
+    return axios.get(`${baseURL}/api/dut/freelist`, headers);
+}
+export function get_freedbh_list(){
+    return axios.get(`${baseURL}/api/dbg/freelist`, headers);
 }
 export function get_dbg_list(){
     return axios.get(`${baseURL}/api/dbg/list`, headers);
@@ -38,13 +53,14 @@ export function get_ptoject_list(){
 export function get_project_unit(project){
     return axios.get(`${baseURL}/api/dbgunit/project_info?project=${project}`, headers);
 }
-export async function submitmapping(kvm,dbg,dut){
+export async function submitmapping(kvm,dbg,dut,project){
     let res = window.confirm(`Please confirm you want to add this commit.`)
     if(res){
         let postform = {
             "kvm_hostname": kvm,
             "dbghost_ip": dbg, 
-            "dut_machine": dut
+            "dut_machine": dut,
+            "project": project
         }
         let err = false
         await axios.post(`${baseURL}/api/kvm/kvm_mapping`,postform, headers).catch((reason) => {
@@ -64,18 +80,31 @@ export async function submitmapping(kvm,dbg,dut){
     }
 }
 export function deletemapping(kvm){
-    let res = window.confirm(`Please confirm you want to delete this mapping.`)
-    if(res){
-        let postform = {
-            "kvm_hostname": kvm
-        }
-        axios.post(`${baseURL}/api/kvm/delete_mapping`,postform, headers).catch((reason) => {
-            console.log(reason.message)
-          }).then(
-            window.confirm(`Success`)
-          );
+    let postform = {
+        "kvm_hostname": kvm
     }
-    return res
+    return axios.post(`${baseURL}/api/kvm/delete_mapping`,postform, headers).catch((reason) => {
+        console.log(reason.message)
+        }).then(
+        window.confirm(`Success`)
+        );
+
+}
+export function Insert_kvm_message(hostname, message){
+    // let res = window.confirm(`Please confirm you want to delete this mapping.`)
+    let postform = {
+        "hostname": hostname,
+        "message": message
+    }
+    return axios.post(`${baseURL}/api/kvm/insert_message`,postform, headers)
+}
+export function Delete_kvm_message(hostname, message){
+    // let res = window.confirm(`Please confirm you want to delete this mapping.`)
+    let postform = {
+        "hostname": hostname,
+        "message": message
+    }
+    return axios.post(`${baseURL}/api/kvm/delete_message`,postform, headers)
 }
 export function uploadfile(dutfile,kvmfile,dbgfile,mapfile){
     var formData = new FormData();
