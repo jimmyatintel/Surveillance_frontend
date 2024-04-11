@@ -9,6 +9,7 @@ import Signin from "./Pages/Signin";
 import Monitor from "./Pages/monitor";
 import Edit from "./Pages/edit";
 import Spy from "./Pages/spy";
+import Profile from "./Pages/Profile";
 import Project_setting from "./Pages/Project_settting"
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react';
 
@@ -39,6 +40,7 @@ const Router = () => (
         <Route exact path="/upload" component={Uploads} />
         <Route exact path="/spy/:project" component={Spy} />
         <Route exact path="/setting/:project" component={Project_setting} />
+        <Route exact path="/profile" component={Profile} />
       </Switch>
   </BrowserRouter>
 );
