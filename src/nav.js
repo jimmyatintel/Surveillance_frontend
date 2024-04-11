@@ -12,27 +12,30 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { Link } from 'react-router-dom';
 import { useMsal } from '@azure/msal-react';
 import { useHistory } from 'react-router-dom';
 
 
-const pages = ['player', 'select', 'upload'];
+// const pages = ['player', 'select', 'upload'];
 const settings = ['Profile', 'Logout'];
 
 export default function ResponsiveAppBar() {
   const { instance, accounts } = useMsal();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [currentuser, setcurrentuser] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const functions = [ profileClickHandler, signOutClickHandler];
+
+  const history = useHistory();
   const signOutClickHandler = () => {
+    console.log("logout")
     instance.logout({
       account: accounts[0], // Specify the account to sign out, you can also pass null to sign out the current account
     });
   }
   const profileClickHandler = () => {
-    useHistory("/profile")
+    history.push("/profile");
   }
+  const functions = [ profileClickHandler, signOutClickHandler];
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -50,7 +53,7 @@ export default function ResponsiveAppBar() {
   };
   React.useEffect(() => {
     console.log(accounts[0])
-    setAnchorElUser(accounts[0].name)
+    setcurrentuser(accounts[0].name)
   },[]);
   return (
     <AppBar position="static">
@@ -103,11 +106,6 @@ export default function ResponsiveAppBar() {
               display: { xs: 'block', md: 'none' },
             }}
           >
-            {pages.map((page) => (
-              <MenuItem key={page} onClick={handleCloseNavMenu} containerElement={<Link to="/p" />}>
-                <Typography textAlign="center">{page}</Typography>
-              </MenuItem>
-            ))}
           </Menu>
         </Box>
         <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
