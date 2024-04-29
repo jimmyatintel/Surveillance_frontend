@@ -14,22 +14,16 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
+import PreviewIcon from '@mui/icons-material/Preview';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import HistoryIcon from '@mui/icons-material/History';
+import AirplayIcon from '@mui/icons-material/Airplay';
+import ArticleIcon from '@mui/icons-material/Article';
+import CastConnectedIcon from '@mui/icons-material/CastConnected';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail } from "../functions/main.js"
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { cutURLhead,getVNClink,get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail } from "../functions/main.js"
 
 function DUT_Status(dut_status,kvm_status){
   if (kvm_status=="error"){
@@ -49,21 +43,6 @@ function DUT_Status(dut_status,kvm_status){
   }
   return "Unknown"
 }
-// function REC_Status(record_status){
-//   if(record_status==1){
-//     return "Pending"
-//   }
-//   if(record_status==0){
-//     return "Stop"
-//   }
-//   if(record_status==2){
-//     return "Monitoring"
-//   }
-//   if(record_status==3){
-//     return "Normal"
-//   }
-//   return "Unknown"
-// }
 const errorimage = (error) => {
   error.target.src = "error_pic.png";
 };
@@ -71,9 +50,11 @@ const errorimage = (error) => {
 
 const defaultTheme = createTheme();
 export default function Monitor() {
-  const [project, setproject] = React.useState('ALL');
+  const [project, setproject] = React.useState('');
   const [project_list, setproject_list] = React.useState(["ALL"]);
   const [dut_link, setdut_link] = React.useState([]);
+  const [dut, setdut] = React.useState([]);
+  const [dbg_link, setdbg_link] = React.useState([]);
   const [dut_status, setdut_status] = React.useState([]);
   const [dut_name, setdut_name] = React.useState([]);
   const [kvm_host, setkvm_host] = React.useState([]);
@@ -88,10 +69,12 @@ export default function Monitor() {
   const handleprojectChange = async (event) => {
       setdut_link([])
       setdut_status([])
+      setdut([])
       setdut_name([])
       setkvm_host([])
       setcards([])
       setrecord_status([])
+      setdbg_link([])
       setproject(event.target.value);
       get_project_unit(event.target.value).then(res => {
         console.log(1)
@@ -103,6 +86,7 @@ export default function Monitor() {
           setdut_status(dut_status => [...dut_status, dut.status])
           setkvm_host(kvm_host => [...kvm_host, dut.hostname])
           setrecord_status(record_status => [...record_status, dut.record_status])
+          setdbg_link(dbg_link => [...dbg_link, dut.debug_host])
         })
       })
     };
@@ -117,6 +101,7 @@ export default function Monitor() {
     })
   }, [])
   React.useEffect(() => {
+    if (project!==''){
       console.log(project)
       get_project_unit(project).then(res => {
         setdut_link([])
@@ -134,6 +119,7 @@ export default function Monitor() {
           setrecord_status(record_status => [...record_status, dut.record_status])
         })
       })
+    }
     }, [project]);
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -186,9 +172,10 @@ export default function Monitor() {
           </Container>
         </Box>
         {
+          project===''?<div></div>:
           project==="ALL"?
           <div>
-            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Lyndon's function</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Dynamic Monitor</Button>
           </div>
           :<div>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestart}>Start</Button>
@@ -229,15 +216,43 @@ export default function Monitor() {
                       DUT: {DUT_Status(dut_status[i],record_status[i])}
                     </Typography>
                     <Typography>
+                      LF: --:--:--
+                    </Typography>
+                    <Typography>
                       KVM: {record_status[i]}
                     </Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
-                    {/* <Button size="small" href ={"/edit/"+kvm_host[i]}>Edit</Button> */}
-                    <Button size="small" href ={"/player/"+kvm_host[i]}>player</Button>
-                    <Button size="small" onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>KVM</Button>
-                  </CardActions>
+                  <CardActions sx={{display: 'flex'}}>
+                    <Tooltip title="View Machine" sx={{flex: 1}}>
+                      <IconButton onClick={()=>viewpopout(dut_link[i])}>
+                        <PreviewIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Time Machine" sx={{flex: 1}}>
+                      <IconButton   href ={"/player/"+kvm_host[i]}>
+                        <HistoryIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="KVM Page" sx={{flex: 1}}>
+                      <IconButton   onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>
+                        <AirplayIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="VNC Page" sx={{flex: 1}}>
+                      <IconButton   onClick={()=>viewpopout(getVNClink(dbg_link[i]))}>
+                        <CastConnectedIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Error Log" sx={{flex: 1}}>
+                      <IconButton  href ={"/faillog/"+dut_name[i]} >
+                        <ArticleIcon />
+                      </IconButton>
+                    </Tooltip>
+                    {/* <Button size="small" onClick={()=>viewpopout(dut_link[i])}>View</Button>
+                    <Button size="small" href ={"/player/"+kvm_host[i]}>time machine</Button> */}
+                    {/* <Button size="small" onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>KVM</Button>                   */}
+                    </CardActions>
+
                 </Card>
               </Grid>
             ))}
@@ -245,7 +260,7 @@ export default function Monitor() {
         </Container>
       </main>
       {/* Footer */}
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+      {/* <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
           Footer
         </Typography>
@@ -257,8 +272,7 @@ export default function Monitor() {
         >
           Something here to give the footer a purpose!
         </Typography>
-        <Copyright />
-      </Box>
+      </Box> */}
       {/* End footer */}
     </ThemeProvider>
   );

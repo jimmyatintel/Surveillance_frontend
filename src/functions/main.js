@@ -217,3 +217,17 @@ export function cutURLTail(url) {
     // Reconstruct the URL with only the protocol and host
     return `${parsedURL.protocol}//${parsedURL.hostname}`;
 }
+export function cutURLhead(url) {
+    // Create a new URL object
+    const parsedURL = new URL(url);
+
+    // Reconstruct the URL with only the protocol and host
+    return `${parsedURL.hostname}`;
+}
+
+export function getVNClink(url) {
+    // Create a new URL object
+
+    // Reconstruct the URL with only the protocol and host
+    return `com.realvnc.vncviewer.connect://${url}/`;
+}

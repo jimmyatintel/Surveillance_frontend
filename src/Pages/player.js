@@ -86,8 +86,11 @@ export default function Player() {
               label="Search by project..."
               onChange={handletypeChange}
           >
-            <MenuItem value={"All"}>All</MenuItem>
             <MenuItem value={"Error"}>Error</MenuItem>
+            <MenuItem value={"Error"}>1 Minute</MenuItem>
+            <MenuItem value={"Error"}>3 Minutes</MenuItem>
+            <MenuItem value={"Error"}>5 Minutes</MenuItem>
+            <MenuItem value={"Error"}>10 Minutes</MenuItem>
             <MenuItem value={"Self-define"}>Self-define</MenuItem>
           </Select>
           </FormControl>
