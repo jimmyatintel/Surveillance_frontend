@@ -1,7 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
+import CameraIcon from '@mui/icons-material/Camera';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import HistoryIcon from '@mui/icons-material/History';
 import AirplayIcon from '@mui/icons-material/Airplay';
 import ArticleIcon from '@mui/icons-material/Article';
+// import CameraIcon from '@mui/icons-material/Camera';
 import CastConnectedIcon from '@mui/icons-material/CastConnected';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
@@ -175,13 +176,13 @@ export default function Monitor() {
           project===''?<div></div>:
           project==="ALL"?
           <div>
-            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Dynamic Monitor</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>AI &nbsp;<CameraIcon/></Button>
           </div>
           :<div>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestart}>Start</Button>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestop}>Stop</Button>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/setting/"+project}>Setting</Button>
-            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>Lyndon's function</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>AI &nbsp;<CameraIcon/></Button>
           </div>
         }
         
