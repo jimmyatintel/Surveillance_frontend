@@ -157,6 +157,6 @@ export function modifymode(host,mode){
     return axios.get(`${baseURL}/api/change_mode?host=${host}&mode=0`);
   }
 }
-export function getreport(project) {
-  return axios.get(`${emailURL}/api/reportstate?project=${project}`);
+export function getreport(code) {
+  return axios.get(`${emailURL}/api/reportstate?project=${code}`);
 }

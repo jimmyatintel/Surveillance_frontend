@@ -253,7 +253,7 @@ export default function Project_setting() {
               setisupdating(false)
               setiscorrect(true)
               setiserrror(false)
-              getreport(project).then(async res => {
+              getreport(CodeNumber).then(async res => {
                 setfilename(res.data.filename)
                 setlastupload(res.data.uploaddate)
                 // setReport(res.data)

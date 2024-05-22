@@ -40,6 +40,9 @@ function DUT_Status(dut_status,kvm_status){
     return "Restart"
   }
   if(dut_status==3){
+    return "Freeze"
+  }
+  if(dut_status==4){
     return "Normal"
   }
   return "Unknown"
