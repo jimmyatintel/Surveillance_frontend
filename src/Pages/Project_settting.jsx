@@ -156,18 +156,21 @@ export default function Project_setting() {
       setalert_Maillist(cache2)
       setProjectName(project)
     })
-    getreport(code).then(async res => {
+    projectstatuschange(project,"Search").then(res => {
+      console.log(res.data)
+      setrunStatus(res.data.status);
+    });
+  }, []);
+  React.useEffect(() => {
+    // action on update of movies
+    getreport(CodeNumber).then(async res => {
       setreporttime(res.data.lasttime_send+"T"+res.data.report_time_hour+":"+res.data.report_time_minut)
       setfilename(res.data.filename)
       setlastupload(res.data.uploaddate)
       console.log(reporttime)
       // setReport(res.data)
     })
-    projectstatuschange(project,"Search").then(res => {
-      console.log(res.data)
-      setrunStatus(res.data.status);
-    });
-  }, []);
+  }, [CodeNumber]);
   React.useEffect(() => {
     // action on update of movies
     console.log(AddHost)
