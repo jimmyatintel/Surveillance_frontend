@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import ResponsiveAppBar from "./nav";
 import Player from "./Pages/player";
+import Faillog from "./Pages/faillog";
 import SelectLabels from "./Pages/KVM_selector";
 import Uploads from "./Pages/upload";
 import Signin from "./Pages/Signin";
@@ -41,6 +42,7 @@ const Router = () => (
         <Route exact path="/spy/:project" component={Spy} />
         <Route exact path="/setting/:project" component={Project_setting} />
         <Route exact path="/profile" component={Profile} />
+        <Route exact path="/faillog/:device" component={Faillog} />
       </Switch>
   </BrowserRouter>
 );
