@@ -61,7 +61,10 @@ export default function Uploads() {
     }
     return (
         <div>
-            <FormControl sx={{ m: 2, minWidth: 30 }}>
+            <Typography variant="h3" sx={{ marginTop: '5vh'}}>
+                Please Upload your file here
+            </Typography>
+            <FormControl sx={{ m: 2, minWidth: 30, marginTop: '5vh' }}>
                 <Button variant="contained" onClick={handlekvmclick}>
                     KVM
                     <input id="kvmfile" type="file" hidden onChange={handlekvmfile}/>
@@ -97,7 +100,7 @@ export default function Uploads() {
                 </Card> : <div></div>
                 }
             </FormControl>
-            <FormControl sx={{ m: 2, minWidth: 30 }}>
+            <FormControl sx={{ m: 2, minWidth: 30, marginTop: '5vh' }}>
                 <Button variant="contained" onClick={handledutclick}>
                     DUT
                     <input id="dutfile" type="file" hidden onChange={handledutfile}/>
@@ -133,7 +136,7 @@ export default function Uploads() {
                 </Card> : <div></div>
                 }
             </FormControl>
-            <FormControl sx={{ m: 2, minWidth: 30 }}>
+            <FormControl sx={{ m: 2, minWidth: 30, marginTop: '5vh' }}>
                 <Button variant="contained" onClick={handledbgclick}>
                     DBG
                     <input id="dbgfile" type="file" hidden onChange={handledbgfile}/>
@@ -169,7 +172,7 @@ export default function Uploads() {
                 </Card> : <div></div>
                 }
             </FormControl>
-            <FormControl sx={{ m: 2, minWidth: 30 }}>
+            <FormControl sx={{ m: 2, minWidth: 30, marginTop: '5vh' }}>
                 <Button variant="contained" onClick={handlemapclick}>
                     mapping
                     <input id="mapfile" type="file" hidden onChange={handlemapfile}/>
@@ -205,7 +208,7 @@ export default function Uploads() {
                 </Card> : <div></div>
                 }
             </FormControl>
-            <FormControl sx={{ m: 2, minWidth: 30 }}>
+            <FormControl sx={{ m: 2, minWidth: 30, marginTop: '5vh' }}>
                 <Button variant="contained" onClick={submitmapping}>
                     Submit
                 </Button>

@@ -32,11 +32,13 @@ import { red } from '@material-ui/core/colors';
 import { green } from '@material-ui/core/colors';
 import CheckIcon from '@material-ui/icons/Check';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import { get_ptoject_list, get_project_unit, project_start } from "../functions/main.js"
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import { Height } from "@mui/icons-material";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,6 +109,10 @@ export default function Project_setting() {
   const onChangeCodeNumber = (event) => {
     setCodeNumber(event.target.value)
   }
+  const [SSIM, setSSIM] = React.useState(-1);
+
+  const [Threshold, setThreshold] = React.useState(-1);
+
   const [Owner, setOwner] = React.useState();
   const onChangeOwner = (event) => {
     setOwner(event.target.value)
@@ -132,9 +138,9 @@ export default function Project_setting() {
       clearInterval(interval);
     };
   }, []); 
-  React.useEffect(async () => {
+  React.useEffect( () => {
     let code
-    await getproject(project).then(res => {
+     getproject(project).then(res => {
       let cache = []
       let cache2 = []
       code = res.data.short_name
@@ -155,6 +161,13 @@ export default function Project_setting() {
       setMaillist(cache)
       setalert_Maillist(cache2)
       setProjectName(project)
+      getreport(res.data.short_name).then(async res => {
+        setreporttime(res.data.lasttime_send+"T"+res.data.report_time_hour+":"+res.data.report_time_minut)
+        setfilename(res.data.filename)
+        setlastupload(res.data.uploaddate)
+        console.log(reporttime)
+        // setReport(res.data)
+      })
     })
     projectstatuschange(project,"Search").then(res => {
       console.log(res.data)
@@ -171,6 +184,7 @@ export default function Project_setting() {
       // setReport(res.data)
     })
   }, [CodeNumber]);
+
   React.useEffect(() => {
     // action on update of movies
     console.log(AddHost)
@@ -191,6 +205,7 @@ export default function Project_setting() {
       res.data.duts.map(async function (dut,i){
         setassigned_machine(assigned_machine => [...assigned_machine, dut.machine_name])
       })
+      console.log(assigned_machine)
     })
     getfreeze(project).then(res => {
       if (res.data.switch === 'open'){
@@ -200,11 +215,6 @@ export default function Project_setting() {
       }
     })
   },[])
-
-
-  const [chipData, setChipData] = React.useState([
-    { key: 0, label: 'chi.lei.wang@intel.com' },
-  ]);
   const childToParent = (childdata) => {
     setMaillist(childdata);
   }
@@ -222,6 +232,7 @@ export default function Project_setting() {
   const [runStatus, setrunStatus] = React.useState(3);
   const [filename, setfilename] = React.useState("");
   const [lastupload, setlastupload] = React.useState("");
+  const [detailpage, setdetailpage] = React.useState(false);
   const onChangereporttime = (event) => {
     setreporttime(event.target.value)
     console.log(event.target.value)
@@ -293,6 +304,51 @@ export default function Project_setting() {
   }
   return (
     <div className="textform">
+      {
+        detailpage === true && 
+        <div className="flow-card">
+          <Row>
+          <Col xs={6}>
+          <FormGroup>
+          <Card sx={{ minWidth: "100%", paddingTop: "3%", minHeight: "100%"}}>
+          <Typography variant="h3" gutterBottom>
+            Select the machine ... 
+          </Typography>
+          <CardContent>
+            {
+              assigned_machine.map((machine) =>
+                <FormControlLabel key={machine} control={<Checkbox  />} label={machine} />
+              )
+            }
+            </CardContent>
+            </Card>
+          </FormGroup>
+          </Col>
+          <Col xs={6}>
+          <Stack
+            component="form"
+            sx={{paddingLeft: "5%"}}
+            spacing={5}
+            noValidate
+            autoComplete="off"
+          >
+          <TextField id="testitem-text" label="Test Item" variant="standard" />
+          <TextField id="SKU-text" label="SKU" variant="standard" />
+          <TextField id="image-text" label="Image" variant="standard" />
+          <TextField id="bios-text" label="BIOS" variant="standard" />
+          {/* <TextField id="standard-basic" label="Standard" variant="standard" /> */}
+          </Stack>
+          <ButtonGroup variant="contained" aria-label="Basic button group" className="back-submit-button">
+            <Button onClick={()=> setdetailpage(false)}>BACK</Button>
+            <Button onClick={()=> setdetailpage(false)}>SUBMIT</Button>
+            {/* <Button>Three</Button> */}
+          </ButtonGroup>
+          </Col>
+          </Row>
+        {/* <Card sx={{ minWidth: "100%" , minHeight: "100%" }}/> */}
+        {/* <NucChipsArray key={String(assigned_machine)} Maillist={assigned_machine}/> */}
+        </div>
+      }
       <Row>
           <Row>
           </Row>
@@ -502,10 +558,27 @@ export default function Project_setting() {
         <Col xs={4}>
         <Col xs={8} >
         DUT in this Project
-        <NucChipsArray key={String(assigned_machine)} Maillist={assigned_machine}/>
+          <NucChipsArray key={String(assigned_machine)} Maillist={assigned_machine}/>
+          <Button variant="contained" color="primary" className="top-margin" onClick={() => setdetailpage(true)}>
+            Detail Setting
+          </Button>
         </Col>
           <FormControl component="fieldset" className={classes.formControl_right}>
             <FormGroup>
+              <Col xs={6} >
+                <TextField id="outlined-basic" label="SSIM" variant="filled" className="fill" onChange={
+                  (event) => {
+                    setSSIM(event.target.value)
+                  }
+                } value={SSIM} defaultValue=" " />
+              </Col>
+              <Col xs={6} >
+                <TextField id="outlined-basic" label="Threshold (Mins)" variant="filled" className="fill" onChange={
+                  (event) => {
+                    setThreshold(event.target.value)
+                  }
+                } value={Threshold} defaultValue=" " />
+              </Col>
               <FormControlLabel
                 control={<Switch
                   checked={threestrike}

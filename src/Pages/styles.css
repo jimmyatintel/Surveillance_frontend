@@ -44,3 +44,18 @@
   margin-left: 20%;
   max-width: 10%;
 }
+.flow-card{
+  position: absolute;
+  width: 70vw;
+  height: 70vh;
+  top: 15%;
+  left: 15%;
+  z-index: 99;
+  background-color: #DCDCDC;
+  padding: 6%;
+}
+.back-submit-button{
+  position: absolute;
+  top: 80%;
+  left: 80%;
+}

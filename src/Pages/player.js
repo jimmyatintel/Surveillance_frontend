@@ -48,13 +48,13 @@ export default function Player() {
   }
   const handletypeChange = (event)=>{
     settype(event.target.value)
-    if (event.target.value=="All"){
+    if (event.target.value==="All"){
       setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
     }
-    if (event.target.value=="Error"){
+    if (event.target.value==="Error"){
       setHlsUrl("https://10.227.106.11:8000/video/"+device+"/error.m3u8")
     }
-    if (event.target.value=="Self-define"){
+    if (event.target.value==="Self-define"){
       setHlsUrl("https://10.227.106.11:8000/video/"+device+"/self-define.m3u8")
     }
   }
@@ -70,9 +70,9 @@ export default function Player() {
   const hour_list = [...Array(24).keys()]
   const minute_list = [...Array(60).keys()]
   const {device} =useParams()
-  React.useEffect(() => {
-    setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
-  }, [])
+  // React.useEffect(() => {
+  //   setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
+  // }, [])
   return (
     <div className="row justify-content-center">
       <Grid container spacing={1}>
@@ -87,10 +87,10 @@ export default function Player() {
               onChange={handletypeChange}
           >
             <MenuItem value={"Error"}>Error</MenuItem>
-            <MenuItem value={"Error"}>1 Minute</MenuItem>
-            <MenuItem value={"Error"}>3 Minutes</MenuItem>
-            <MenuItem value={"Error"}>5 Minutes</MenuItem>
-            <MenuItem value={"Error"}>10 Minutes</MenuItem>
+            <MenuItem value={"1M"}>1 Minute</MenuItem>
+            <MenuItem value={"3M"}>3 Minutes</MenuItem>
+            <MenuItem value={"5M"}>5 Minutes</MenuItem>
+            <MenuItem value={"10M"}>10 Minutes</MenuItem>
             <MenuItem value={"Self-define"}>Self-define</MenuItem>
           </Select>
           </FormControl>
@@ -168,12 +168,6 @@ export default function Player() {
         width="60%"
         height="auto"
       />
-      {/* <Player>
-      <HLSSource
-        isVideoChild
-        src={hlsUrl}
-      />
-    </Player> */}
     </div>
   );
 }
