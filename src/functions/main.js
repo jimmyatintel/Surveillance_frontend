@@ -132,9 +132,18 @@ export function gen_self_define_video(device,hour,minute,duration){
         "kvm_hostname": device,
         "hour": hour,
         "minute": minute,
-        "duration": duration
+        "duration": duration 
     }
     return axios.get(`${baseURL}/api/kvm/gen_video`, {params: postform}, headers);
+}
+export function gen_minute_video(device,hour,minute,duration){
+    let postform = {
+        "kvm_hostname": device,
+        "hour": hour,
+        "minute": minute,
+        "duration": duration*60
+    }
+    return axios.get(`${baseURL}/api/kvm/gen_minute_video`, {params: postform}, headers);
 }
 export function project_start(project){
     let postform = {

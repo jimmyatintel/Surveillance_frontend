@@ -8,7 +8,7 @@ import * as React from 'react';
 import Slider from '@mui/material/Slider';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { gen_self_define_video } from "../functions/main.js"
+import { gen_self_define_video, gen_minute_video } from "../functions/main.js"
 
 import HLSSource from './hls.js';
 
@@ -46,10 +46,32 @@ export default function Player() {
   const handleminuteChange = (event)=>{
     setminute(event.target.value)
   }
-  const handletypeChange = (event)=>{
+  const handletypeChange = async (event)=>{
     settype(event.target.value)
-    if (event.target.value==="All"){
-      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/all.m3u8")
+    const now = new Date();
+    if (event.target.value==="1M"){
+      now.setTime(now.getTime() - (2 * 60 * 1000));
+      await gen_minute_video(device,now.getHours(),now.getMinutes(),"1")
+      await delay(1000);
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/60M.m3u8")
+    }
+    if (event.target.value==="3M"){
+      now.setTime(now.getTime() - (4 * 60 * 1000));
+      await gen_minute_video(device,now.getHours(),now.getMinutes(),"3")
+      await delay(1000);
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/180M.m3u8")
+    }
+    if (event.target.value==="5M"){
+      now.setTime(now.getTime() - (6 * 60 * 1000));
+      await gen_minute_video(device,now.getHours(),now.getMinutes(),"5")
+      await delay(1000);
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/300M.m3u8")
+    }
+    if (event.target.value==="10M"){
+      now.setTime(now.getTime() - (11 * 60 * 1000));
+      await gen_minute_video(device,now.getHours(),now.getMinutes(),"10")
+      await delay(1000);
+      setHlsUrl("https://10.227.106.11:8000/video/"+device+"/600M.m3u8")
     }
     if (event.target.value==="Error"){
       setHlsUrl("https://10.227.106.11:8000/video/"+device+"/error.m3u8")
