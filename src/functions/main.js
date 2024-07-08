@@ -219,6 +219,18 @@ export function unlock_screen(hostname){
     }
     return axios.get(`${baseURL}/api/dut/unlockframe`, {params: postform}, headers);
 }
+export function get_all_errorlog(machine_name){
+    let postform = {
+        "machine_name": machine_name
+    }
+    return axios.get(`${baseURL}/api/dut/errorlog`, {params: postform}, headers);
+}
+export function delete_all_errorlog(machine_name){
+    let postform = {
+        "machine_name": machine_name
+    }
+    return axios.get(`${baseURL}/api/dut/deleteErrorlog`, {params: postform}, headers);
+}
 export function cutURLTail(url) {
     // Create a new URL object
     const parsedURL = new URL(url);
@@ -239,4 +251,8 @@ export function getVNClink(url) {
 
     // Reconstruct the URL with only the protocol and host
     return `com.realvnc.vncviewer.connect://${url}/`;
+}
+
+export function getSystemusage() {
+    return axios.get(`${baseURL}/api/system`, headers);
 }

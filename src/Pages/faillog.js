@@ -13,19 +13,54 @@ import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { get_dut_map } from "../functions/main.js"
+import { get_dut_map,get_all_errorlog } from "../functions/main.js"
+import FormDialog from './FormDialog.js';
 export default function Faillog(){
     const {device} =useParams()
     const [Steps, setSteps] = React.useState(0);
     const [totalStep, setTotalStep] = React.useState(20);
     const [hlsUrl, setHlsUrl] = React.useState("");
     const [project, setproject] = React.useState("");
+    const [time, settime] = React.useState("");
+    const [type, settype] = React.useState("");
+    const [testitem, settestitem] = React.useState("");
+    const [sku, setsku] = React.useState("");
+    const [image, setimage] = React.useState("");
+    const [bios, setbios] = React.useState("");
+
+    const [errorlogs, seterrorlogs] = React.useState([]);
     React.useEffect(() => {
         get_dut_map(device).then(res=>{
             setproject(res.data.project)
         })
+        get_all_errorlog(device).then(res=>{
+          if (res.data === null){
+            return
+          }
+          seterrorlogs(res.data)
+          setTotalStep(res.data.length)
+          setHlsUrl("https://10.227.106.11:8000/errorvideo/"+device+"/"+res.data[0].uuid+".m3u8")
+          settime(res.data[0].time)
+          settype(res.data[0].type)
+          settestitem(res.data[0].test_item)
+          setsku(res.data[0].sku)
+          setimage(res.data[0].image)
+          setbios(res.data[0].bios)
+      })
       }, [])
-
+    React.useEffect(() => {
+        // setHlsUrl(errorlogs[Steps].hls)
+        if (errorlogs[Steps] === undefined){
+          return
+        }
+        setHlsUrl("https://10.227.106.11:8000/errorvideo/"+device+"/"+errorlogs[Steps].uuid+".m3u8")
+        settime(errorlogs[Steps].time)
+        settype(errorlogs[Steps].type)
+        settestitem(errorlogs[Steps].test_item)
+        setsku(errorlogs[Steps].sku)
+        setimage(errorlogs[Steps].image)
+        setbios(errorlogs[Steps].bios)
+      }, [Steps])
     return (
         <div className=''>
             <Grid
@@ -53,7 +88,7 @@ export default function Faillog(){
                         />
                     </Grid>
                     <Grid item xs={3}>
-                    <Card >
+                    <Card sx={{ marginBottom: 8}}>
                         <CardContent sx={{ textAlign: 'left', flexDirection: 'column', display: 'flex' }}>
                             <Typography variant="h5" component="h5" gutterBottom>
                                 Information of this Crush
@@ -62,25 +97,26 @@ export default function Faillog(){
                                 Project: {project}
                             </Typography>
                             <Typography variant="subtitle1" component="subtitle1" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                Crush Time: 
+                                Crush Time: {time}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                Type: 
+                                Type: {type}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                Test Item: 
+                                Test Item: {testitem}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                SKU: 
+                                SKU: {sku}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                Image: 
+                                Image: {image}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                BIOS: 
+                                BIOS: {bios}
                             </Typography>
                             </CardContent>
                         </Card>
+                        <FormDialog device={device}></FormDialog>
                     </Grid>
                     <Grid item xs={2}/>
                 </Grid>
