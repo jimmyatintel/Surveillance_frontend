@@ -33,7 +33,7 @@ import { green } from '@material-ui/core/colors';
 import CheckIcon from '@material-ui/icons/Check';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import CardActions from '@material-ui/core/CardActions';
-import { get_ptoject_list, get_project_unit, project_start } from "../functions/main.js"
+import { get_ptoject_list, get_project_unit, setssim,getssim } from "../functions/main.js"
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Card from '@mui/material/Card';
@@ -169,12 +169,22 @@ export default function Project_setting() {
         // setReport(res.data)
       })
     })
-   
     projectstatuschange(project,"Search").then(res => {
       console.log(res.data)
       setrunStatus(res.data.status);
     });
   }, []);
+  React.useEffect(() => {
+    // action on update of movies
+    getreport(CodeNumber).then(async res => {
+      setreporttime(res.data.lasttime_send+"T"+res.data.report_time_hour+":"+res.data.report_time_minut)
+      setfilename(res.data.filename)
+      setlastupload(res.data.uploaddate)
+      console.log(reporttime)
+      // setReport(res.data)
+    })
+  }, [CodeNumber]);
+
   React.useEffect(() => {
     // action on update of movies
     console.log(AddHost)
@@ -203,6 +213,10 @@ export default function Project_setting() {
       }else{
         setfreezedetect(false)
       }
+    })
+    getssim(project).then(res => {
+      setSSIM(res.data.ssim)
+      setThreshold(res.data.threshold)
     })
   },[])
   const childToParent = (childdata) => {
@@ -568,6 +582,11 @@ export default function Project_setting() {
                     setThreshold(event.target.value)
                   }
                 } value={Threshold} defaultValue=" " />
+              </Col>
+              <Col xs={6} >
+              <Button variant="contained" color="primary" className="subbutton" onClick={()=> setssim(project,SSIM,Threshold)}>
+                Submit
+              </Button>
               </Col>
               <FormControlLabel
                 control={<Switch

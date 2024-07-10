@@ -15,6 +15,21 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { get_dut_map,get_all_errorlog } from "../functions/main.js"
 import FormDialog from './FormDialog.js';
+function DUT_Status(dut_status){
+  if(dut_status==0){
+    return "BSOD"
+  }
+  if(dut_status==1){
+    return "Black"
+  }
+  if(dut_status==2){
+    return "Restart"
+  }
+  if(dut_status==3){
+    return "Freeze"
+  }
+  return "Unknown"
+}
 export default function Faillog(){
     const {device} =useParams()
     const [Steps, setSteps] = React.useState(0);
@@ -100,7 +115,7 @@ export default function Faillog(){
                                 Crush Time: {time}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
-                                Type: {type}
+                                Type: {DUT_Status(type)}
                             </Typography>
                             <Typography variant="subtitle2" component="subtitle2" sx={{ mb: 1.5 }} color="text.secondary" gutterBottom>
                                 Test Item: {testitem}
