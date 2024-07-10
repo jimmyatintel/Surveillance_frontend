@@ -256,3 +256,19 @@ export function getVNClink(url) {
 export function getSystemusage() {
     return axios.get(`${baseURL}/api/system`, headers);
 }
+
+export function getssim(project) {
+    let postform = {
+        "project": project
+    }
+    return axios.get(`${baseURL}/api/project/ssim_threshold?`, {params: postform}, headers);
+}
+
+export function setssim(project,ssim,thresh) {
+    let postform = {
+        "project": project,
+        "ssim": ssim,
+        "threshold": thresh
+    }
+    return axios.post(`${baseURL}/api/project/ssim_threshold`,postform, headers);
+}
