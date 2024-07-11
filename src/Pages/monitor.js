@@ -71,27 +71,10 @@ export default function Monitor() {
     project_stop(project)
   }
   const handleprojectChange = async (event) => {
-      setdut_link([])
-      setdut_status([])
-      setdut([])
-      setdut_name([])
-      setkvm_host([])
-      setcards([])
-      setrecord_status([])
-      setdbg_link([])
       setproject(event.target.value);
-      get_project_unit(event.target.value).then(res => {
-        console.log(1)
-        console.log(res.data)
-        res.data.duts.map(async function (dut,i){
-          setcards(cards => [...cards, i])
-          setdut_name(dut_name => [...dut_name, dut.machine_name])
-          setdut_link(dut_link => [...dut_link, dut.stream_url])
-          setdut_status(dut_status => [...dut_status, dut.status])
-          setkvm_host(kvm_host => [...kvm_host, dut.hostname])
-          setrecord_status(record_status => [...record_status, dut.record_status])
-          setdbg_link(dbg_link => [...dbg_link, dut.debug_host])
-        })
+      await get_project_unit(event.target.value).then(res => {
+        console.log(res.data.duts)
+        setdut(res.data.duts)
       })
     };
   const viewpopout = (url)=> {
@@ -104,27 +87,27 @@ export default function Monitor() {
       })
     })
   }, [])
-  React.useEffect(() => {
-    if (project!==''){
-      console.log(project)
-      get_project_unit(project).then(res => {
-        setdut_link([])
-        setdut_status([])
-        setdut_name([])
-        setkvm_host([])
-        setcards([])
-        setrecord_status([])
-        res.data.duts.map(async function (dut,i){
-          setcards(cards => [...cards, i])
-          setdut_name(dut_name => [...dut_name, dut.machine_name])
-          setdut_link(dut_link => [...dut_link, dut.stream_url])
-          setdut_status(dut_status => [...dut_status, dut.status])
-          setkvm_host(kvm_host => [...kvm_host, dut.hostname])
-          setrecord_status(record_status => [...record_status, dut.record_status])
-        })
-      })
-    }
-    }, [project]);
+  // React.useEffect(() => {
+  //   if (project!==''){
+  //     console.log(project)
+  //     get_project_unit(project).then(res => {
+  //       setdut_link([])
+  //       setdut_status([])
+  //       setdut_name([])
+  //       setkvm_host([])
+  //       setcards([])
+  //       setrecord_status([])
+  //       res.data.duts.map(async function (dut,i){
+  //         setcards(cards => [...cards, i])
+  //         setdut_name(dut_name => [...dut_name, dut.machine_name])
+  //         setdut_link(dut_link => [...dut_link, dut.stream_url])
+  //         setdut_status(dut_status => [...dut_status, dut.status])
+  //         setkvm_host(kvm_host => [...kvm_host, dut.hostname])
+  //         setrecord_status(record_status => [...record_status, dut.record_status])
+  //       })
+  //     })
+  //   }
+  //   }, [project]);
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
@@ -193,8 +176,8 @@ export default function Monitor() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card,i) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {dut.map((card,i) => (
+              <Grid item key={i} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
@@ -204,7 +187,7 @@ export default function Monitor() {
                       // 16:9
                       pt: '56.25%',
                     }}
-                    image={"https://10.227.106.11:8000/image/"+kvm_host[i]+"/"+"cover.png"}
+                    image={"https://10.227.106.11:8000/image/"+dut[i].hostname+"/"+"cover.png"}
                     onError={e => {
 
                       e.target.src = "error_pic.png";
@@ -214,41 +197,41 @@ export default function Monitor() {
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      {dut_name[i]}
+                      {dut[i].machine_name}
                     </Typography>
                     <Typography>
-                      DUT: {DUT_Status(dut_status[i],record_status[i])}
+                      DUT: {DUT_Status(dut[i].status,dut[i].record_status)}
                     </Typography>
                     <Typography>
-                      LF: --:--:--
+                      LF: {dut[i].last_fail}
                     </Typography>
                     <Typography>
-                      KVM: {record_status[i]}
+                      KVM: {dut[i].record_status}
                     </Typography>
                   </CardContent>
                   <CardActions sx={{display: 'flex'}}>
                     <Tooltip title="View Machine" sx={{flex: 1}}>
-                      <IconButton onClick={()=>viewpopout(dut_link[i])}>
+                      <IconButton onClick={()=>viewpopout(dut[i].stream_url)}>
                         <PreviewIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Time Machine" sx={{flex: 1}}>
-                      <IconButton   href ={"/player/"+kvm_host[i]}>
+                      <IconButton   href ={"/player/"+dut[i].hostname}>
                         <HistoryIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="KVM Page" sx={{flex: 1}}>
-                      <IconButton   onClick={()=>viewpopout(cutURLTail(dut_link[i]))}>
+                      <IconButton   onClick={()=>viewpopout(cutURLTail(dut[i].stream_url))}>
                         <AirplayIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="VNC Page" sx={{flex: 1}}>
-                      <IconButton   onClick={()=>viewpopout(getVNClink(dbg_link[i]))}>
+                      <IconButton   onClick={()=>viewpopout(getVNClink(dut[i].debug_host))}>
                         <CastConnectedIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Error Log" sx={{flex: 1}}>
-                      <IconButton  href ={"/faillog/"+dut_name[i]} >
+                      <IconButton  href ={"/faillog/"+dut[i].machine_name} >
                         <ArticleIcon />
                       </IconButton>
                     </Tooltip>
