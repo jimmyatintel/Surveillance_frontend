@@ -33,7 +33,7 @@ import { green } from '@material-ui/core/colors';
 import CheckIcon from '@material-ui/icons/Check';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import CardActions from '@material-ui/core/CardActions';
-import { get_ptoject_list, get_project_unit, setssim,getssim } from "../functions/main.js"
+import { get_ptoject_list, get_project_unit, setssim,getssim,setdutmachinestatus } from "../functions/main.js"
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Card from '@mui/material/Card';
@@ -237,6 +237,11 @@ export default function Project_setting() {
   const [filename, setfilename] = React.useState("");
   const [lastupload, setlastupload] = React.useState("");
   const [detailpage, setdetailpage] = React.useState(false);
+  const [testitem, settestitem] = React.useState("");
+  const [sku, setsku] = React.useState("");
+  const [image, setimage] = React.useState("");
+  const [bios, setbios] = React.useState("");
+  const [config, setconfig] = React.useState("");
   const onChangereporttime = (event) => {
     setreporttime(event.target.value)
     console.log(event.target.value)
@@ -249,6 +254,14 @@ export default function Project_setting() {
   const onchangefreeze = (event) => {
     setfreezedetect(event.target.checked)
     let status = modifyfreeze(project,event.target.checked)
+  }
+  const handleerrorlogsubmit = async(event) => {
+    const machine = getCheckedMachines();
+    console.log(machine)
+    await machine.forEach(element => {
+      setdutmachinestatus(element,testitem,sku,image,bios,config)
+    })
+    setdetailpage(false)
   }
   const onChangeFile = (event) => {
     // console.log(event.target.files[0])
@@ -306,6 +319,17 @@ export default function Project_setting() {
   const handleFail = () => {
     window.alert("Operation Fail!");
   }
+  const [checkedState, setCheckedState] = React.useState(
+    assigned_machine.reduce((acc, machine) => ({ ...acc, [machine]: false }), {})
+  );
+
+  const handleCheckboxChange = (event) => {
+    setCheckedState({ ...checkedState, [event.target.name]: event.target.checked });
+  };
+
+  const getCheckedMachines = () => {
+    return Object.entries(checkedState).filter(([machine, isChecked]) => isChecked).map(([machine]) => machine);
+  };
   return (
     <div className="textform">
       {
@@ -321,7 +345,10 @@ export default function Project_setting() {
           <CardContent>
             {
               assigned_machine.map((machine) =>
-                <FormControlLabel key={machine} control={<Checkbox  />} label={machine} />
+                <FormControlLabel 
+                  key={machine} 
+                  control={<Checkbox checked={checkedState[machine]} onChange={handleCheckboxChange} name={machine} />} 
+                  label={machine}/>
               )
             }
             </CardContent>
@@ -336,15 +363,16 @@ export default function Project_setting() {
             noValidate
             autoComplete="off"
           >
-          <TextField id="testitem-text" label="Test Item" variant="standard" />
-          <TextField id="SKU-text" label="SKU" variant="standard" />
-          <TextField id="image-text" label="Image" variant="standard" />
-          <TextField id="bios-text" label="BIOS" variant="standard" />
+          <TextField id="testitem-text" label="Test Item" variant="standard" onChange={(event) => {settestitem(event.target.value)}}/>
+          <TextField id="SKU-text" label="SKU" variant="standard" onChange={(event) => {setsku(event.target.value)}}/>
+          <TextField id="image-text" label="Image" variant="standard" onChange={(event) => {setimage(event.target.value)}}/>
+          <TextField id="bios-text" label="BIOS" variant="standard" onChange={(event) => {setbios(event.target.value)}}/>
+          <TextField id="config-text" label="Config" variant="standard" onChange={(event) => {setconfig(event.target.value)}}/>
           {/* <TextField id="standard-basic" label="Standard" variant="standard" /> */}
           </Stack>
           <ButtonGroup variant="contained" aria-label="Basic button group" className="back-submit-button">
             <Button onClick={()=> setdetailpage(false)}>BACK</Button>
-            <Button onClick={()=> setdetailpage(false)}>SUBMIT</Button>
+            <Button onClick={handleerrorlogsubmit}>SUBMIT</Button>
             {/* <Button>Three</Button> */}
           </ButtonGroup>
           </Col>
@@ -584,7 +612,7 @@ export default function Project_setting() {
                 } value={Threshold} defaultValue=" " />
               </Col>
               <Col xs={6} >
-              <Button variant="contained" color="primary" className="subbutton" onClick={()=> setssim(project,SSIM,Threshold)}>
+              <Button variant="contained" color="primary" className="subbutton" onClick={()=> setssim(project,parseInt(SSIM,10),parseInt(Threshold,10))}>
                 Submit
               </Button>
               </Col>
