@@ -263,7 +263,13 @@ export function getssim(project) {
     }
     return axios.get(`${baseURL}/api/project/ssim_threshold`, {params: postform}, headers);
 }
-
+export function addproject(project,code) {
+    let postform = {
+        "project": project,
+        "codename": code
+    }
+    return axios.get(`${baseURL}/api/project/addnewproject`, {params: postform}, headers);
+}
 export function setssim(project,ssim,thresh) {
     let postform = {
         "project": project,
@@ -279,7 +285,12 @@ export function seterrorlog(project) {
     }
     return axios.get(`${baseURL}/api/dut/seterrorlog`, {params: postform}, headers);
 }
-
+export function deleteerrorlogbyproject(project) {
+    let postform = {
+        "project": project
+    }
+    return axios.get(`${baseURL}/api/dut/deleteErrorlogbyproject`, {params: postform}, headers);
+}
 export function setdutmachinestatus(machine_name,testitem,sku,image,bios,config) {
     let postform = {
         "machine": machine_name,
