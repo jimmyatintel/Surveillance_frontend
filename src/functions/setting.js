@@ -99,7 +99,7 @@ export function getNUCstatus() {
 export function removeProject(project){
   let res = window.confirm(`Please confirm you want to delete ${project}.`)
   if(res){
-    axios.get(`${baseURL}/api/project?status=2&project_name=${project}`);
+    axios.get(`${baseURL}/api/project/deleteproject?project=${project}`);
     window.location.replace("/");
   }
 }

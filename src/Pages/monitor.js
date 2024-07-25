@@ -24,8 +24,8 @@ import ArticleIcon from '@mui/icons-material/Article';
 import CastConnectedIcon from '@mui/icons-material/CastConnected';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { cutURLhead,getVNClink,get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail } from "../functions/main.js"
-
+import { cutURLhead,getVNClink,get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail,deleteerrorlogbyproject } from "../functions/main.js"
+import FormDialog from './addprojectdialog';
 function DUT_Status(dut_status,kvm_status){
   if (kvm_status=="error"){
     return "Unknown"
@@ -70,11 +70,24 @@ export default function Monitor() {
   const handlestop = ()=> {
     project_stop(project)
   }
+  const delete_error = () => {
+    let res = window.confirm(`Please confirm you want to delete all errorlog in ${project}.`)
+    if(res){
+      deleteerrorlogbyproject(project).then(res => {
+        window.confirm(`Successfully delete ${res.data} rows in ${project}.`)
+      })
+    }
+  }
   const handleprojectChange = async (event) => {
       setproject(event.target.value);
       await get_project_unit(event.target.value).then(res => {
         console.log(res.data.duts)
-        setdut(res.data.duts)
+        if (res.data.duts==null){
+          setdut([])
+        }else{
+          setdut(res.data.duts)
+        }
+
       })
     };
   const viewpopout = (url)=> {
@@ -155,6 +168,7 @@ export default function Monitor() {
                     }
                 </Select>
               </FormControl>
+              <FormDialog></FormDialog>
             </Stack>
           </Container>
         </Box>
@@ -167,6 +181,7 @@ export default function Monitor() {
           :<div>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestart}>Start</Button>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={handlestop}>Stop</Button>
+            <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} onClick={delete_error}>Clean All Errorlog</Button>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/setting/"+project}>Setting</Button>
             <Button variant="contained" sx={{marginLeft: 2, marginRight: 2}} href ={"/spy/"+project}>AI &nbsp;<CameraIcon/></Button>
           </div>

@@ -202,10 +202,11 @@ export default function Project_setting() {
     })
     get_project_unit(project).then(res => {
       setassigned_machine([])
-      res.data.duts.map(async function (dut,i){
-        setassigned_machine(assigned_machine => [...assigned_machine, dut.machine_name])
-      })
-      console.log(assigned_machine)
+      if(res.data.duts!=null){
+        res.data.duts.map(async function (dut,i){
+          setassigned_machine(assigned_machine => [...assigned_machine, dut.machine_name])
+        })
+      }
     })
     getfreeze(project).then(res => {
       if (res.data.switch === 'open'){
