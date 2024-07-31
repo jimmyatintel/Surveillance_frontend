@@ -122,10 +122,10 @@ export function uploadfile(dutfile,kvmfile,dbgfile,mapfile){
     return axios.post(`${baseURL}/api/upload`, formData, customHeader);
 }
 export function gen_self_define_video(device,hour,minute,duration){
-    if (hour==""){
+    if (hour===""){
         return window.alert("Please select hour")
     }
-    if (minute==""){
+    if (minute===""){
         return window.alert("Please select minute")
     }
     let postform = {
