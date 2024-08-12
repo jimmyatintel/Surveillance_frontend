@@ -149,6 +149,13 @@ export default function ResponsiveAppBar() {
           >
           mapping
           </Button>
+          <Button
+          onClick={handleCloseNavMenu}
+          sx={{ my: 2, color: 'white', display: 'block' }}
+          href ={process.env.REACT_APP_API_GRAFANA_URL}
+          >
+          System Status
+          </Button>
         </Box>
 
         <Box sx={{ flexGrow: 0 }}>

@@ -26,7 +26,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { cutURLhead,getVNClink,get_ptoject_list, get_project_unit, project_start, project_stop, cutURLTail,deleteerrorlogbyproject } from "../functions/main.js"
 import FormDialog from './addprojectdialog';
-function DUT_Status(dut_status,kvm_status){
+function DUT_Status(dut_status,kvm_status,coord){
+  if (coord===""){
+    return "Unlocked"
+  }
   if (kvm_status=="error"){
     return "Unknown"
   }
@@ -215,7 +218,7 @@ export default function Monitor() {
                       {dut[i].machine_name}
                     </Typography>
                     <Typography>
-                      DUT: {DUT_Status(dut[i].status,dut[i].record_status)}
+                      DUT: {DUT_Status(dut[i].status,dut[i].record_status,dut[i].lock_coord)}
                     </Typography>
                     <Typography>
                       LF: {dut[i].last_fail}
