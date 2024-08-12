@@ -24,7 +24,7 @@ import {useParams} from "react-router-dom";
 import Switch from '@material-ui/core/Switch';
 import ChipsArray from './chip'
 import NucChipsArray from './chipnuc'
-import { addProject, getNUCstatus, getfreeze, removeProject, modifyfreeze, getlockednuc, get3strike, modify3strike } from "../functions/setting"
+import { addProject, getNUCstatus, getfreeze, removeProject, modifyfreeze, getstarttime, get3strike, modify3strike, sendreport } from "../functions/setting"
 import { getproject,getreport } from "../functions/setting"
 import { uploadfile,checktemplate,getCurrentDate,projectstatuschange} from "../functions/setting"
 import ErrorIcon from '@material-ui/icons/Error';
@@ -39,6 +39,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import { Height } from "@mui/icons-material";
+import { useMsal } from '@azure/msal-react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,7 +69,6 @@ const useStyles = makeStyles((theme) => ({
   },
   card_root: {
     marginTop: 20,
-    maxWidth: 200,
   },
   card_bullet: {
     display: 'inline-block',
@@ -83,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Project_setting() {
+  const { instance, accounts } = useMsal();
   const classes = useStyles();
   let location = useLocation().pathname;
   const [Maillist, setMaillist] = React.useState([]);
@@ -126,6 +127,14 @@ export default function Project_setting() {
     let len = alert_Maillist.length
     setalert_Maillist([...alert_Maillist, { key: len, label: alert_Mailaddress }]);
   };
+  const sendtestmail =() => {
+    console.log("send test mail")
+    sendreport(CodeNumber,accounts[0]).catch(() => {
+      window.alert("No mail uploaded!")
+      return
+    })
+    window.alert("Test mail sent to " + accounts[0] + " ! ")
+  }
   React.useEffect(() => {
     const interval = setInterval(() => {
       projectstatuschange(project,"Search").then(res => {
@@ -173,6 +182,13 @@ export default function Project_setting() {
       console.log(res.data)
       setrunStatus(res.data.status);
     });
+    getstarttime(project).then(res => {
+      if (res.data === ""){
+        setlast_start_time("NULL")
+      }else{
+        setlast_start_time(res.data)
+      }
+    })
   }, []);
   React.useEffect(() => {
     // action on update of movies
@@ -243,6 +259,8 @@ export default function Project_setting() {
   const [image, setimage] = React.useState("");
   const [bios, setbios] = React.useState("");
   const [config, setconfig] = React.useState("");
+  const [last_start_time,setlast_start_time ] = React.useState("NULL");
+
   const onChangereporttime = (event) => {
     setreporttime(event.target.value)
     console.log(event.target.value)
@@ -389,32 +407,13 @@ export default function Project_setting() {
           <Row>
           <Col xs={4}><h1 className="mb-3"> {project} </h1></Col>
             <Col xs={2}>
-            { runStatus === 0 &&
-                <Button variant="contained" disabled>
-                  Offline
-                </Button>
-            }
-
-            { runStatus === 1 &&
-              <Button variant="contained" color="secondary">
-              Waking
-            </Button>
-            }
-
-            { runStatus === 2 &&
+            Last Start Time:
               <Button variant="contained" color="primary">
-              Running
-            </Button>
-            }
-            
-            { runStatus === 3 &&
-              <Button variant="contained" >
-              Pending
-            </Button>
-            }
+                {last_start_time}
+              </Button>
             </Col>
           <Col xs={4}>
-          <ButtonGroup size="large" color="secondary" aria-label="large outlined primary button group">
+          {/* <ButtonGroup size="large" color="secondary" aria-label="large outlined primary button group">
           <Button className="" onClick={() => {
                       if (window.confirm("Do you want to wake all host?")) {
                         projectstatuschange(project,"Wake").then(() => {
@@ -449,7 +448,7 @@ export default function Project_setting() {
                         })
                       }
                     }} disabled={runStatus!==2}>RESET</Button>
-          </ButtonGroup>
+          </ButtonGroup> */}
         </Col>
           </Row>
           <Row className="input">
@@ -638,6 +637,7 @@ export default function Project_setting() {
             </FormGroup>
           </FormControl>
           {/* <div className="fixbox"></div> */}
+          <Col xs={8} >
           <form className={classes.container} noValidate>
             <TextField
               id="datetime-local"
@@ -666,10 +666,11 @@ export default function Project_setting() {
                 {lastupload}
               </Typography>
             </CardContent>
-            {/* <CardActions>
-              <Button size="small">Learn More</Button>
-            </CardActions> */}
+            <CardActions>
+              <Button size="small" onClick={sendtestmail}>Send test mail</Button>
+            </CardActions>
           </Card>
+          </Col>
         </Col>
       </Row>
     </div>

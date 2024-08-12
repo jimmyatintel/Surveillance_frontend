@@ -160,3 +160,10 @@ export function modifymode(host,mode){
 export function getreport(code) {
   return axios.get(`${emailURL}/api/reportstate?project=${code}`);
 }
+export function getstarttime(project) {
+  return axios.get(`${baseURL}/api/project/getstarttime?project=${project}`);
+}
+
+export function sendreport(code, email) {
+  return axios.get(`${emailURL}/api/sendreport?project=${code}&email=${email}`);
+}
