@@ -129,11 +129,11 @@ export default function Project_setting() {
   };
   const sendtestmail =() => {
     console.log("send test mail")
-    sendreport(CodeNumber,accounts[0]).catch(() => {
+    sendreport(CodeNumber,accounts[0].username).catch(() => {
       window.alert("No mail uploaded!")
       return
     })
-    window.alert("Test mail sent to " + accounts[0] + " ! ")
+    window.alert("Test mail sent to " + accounts[0].username + " ! ")
   }
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -205,9 +205,6 @@ export default function Project_setting() {
     // action on update of movies
     console.log(AddHost)
   }, [AddHost]);
-  // React.useEffect( () => {
-  //    
-  // })
   React.useEffect(() => {
     get3strike(project).then(res => {
       if (res.data.status == 1){
